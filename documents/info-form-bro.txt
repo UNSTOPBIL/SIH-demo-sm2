@@ -1,0 +1,87 @@
+Here's the exact build list — concrete enough to hand to whoever's coding, in the order I'd build it.
+
+## 1. Data layer first — this is 40% of your actual work
+
+Build one structured file (JSON or a lightweight SQLite table) with one row per commodity. Don't touch UI until this exists.
+
+**Fields per commodity:**
+- `name_en`, `name_hi` (bilingual)
+- `category` — fruit/vegetable, grain/millet, spice, dairy, dry snack, oil/fat product, etc.
+- `moisture_pct`, `fat_oil_pct`, `ph_range`, `respiration_class` (Very Low/Low/Moderate/High/Very High/Extremely High, per Kader's bands)
+- `storage_type` — ambient / chilled / frozen
+- `shelf_life_target_days`
+- `recommended_material` — one of LDPE, HDPE, PET, BOPP, metalized film, aluminium foil laminate, biodegradable/compostable film
+- `otr_range`, `wvtr_range`, `thickness_um` (pull from the table I gave you last message)
+- `map_suitable` (bool) + suggested gas mix if yes
+- `fssai_schedule` — which schedule (I/II/III material class, IV food-category mapping)
+- `bis_code` — e.g. IS 10146
+- `migration_note` — flag if plastic (60 mg/kg / 10 mg/dm², IS 9845)
+- `epr_flag` (bool) — true if plastic, with category (rigid/flexible/multilayer/compostable)
+- `nabl_note` — standard reminder text
+- `labelling_checklist` — can be one shared template, doesn't need to vary per commodity
+
+**Seed with 15–20 real PMFME/ODOP commodities**, not generic ones — makhana (Bihar), ragi/bajra/jowar (millets, multiple states), moringa (Tamil Nadu/Andhra), turmeric (Telangana), minor forest produce like tendu/mahua (tribal districts, this is literally named in PMFME's own focus areas), pickle, papad, jaggery, honey, dried fruits, spices blend, ghee. This alone signals to a jury that you read the ministry's own scheme, not just the PS text — a scripted differentiator.
+
+Get this table right first. Everything downstream just reads from it.
+
+## 2. Screens — build in this order
+
+**Screen 1 — Commodity input**
+- Text search box + microphone icon (Web Speech API, set `lang="hi-IN"` or `"en-IN"` based on toggle)
+- Language toggle (Hindi/English) visible top-right, persists across the whole flow
+- Autocomplete against your seeded list — don't allow free text yet, it breaks the demo if someone types something you didn't seed
+- Optional: 5–6 property sliders/dropdowns (moisture, fat, pH, desired shelf life, storage type) that pre-fill from your data but let the user override — this is what makes it look like a real tool and not a static lookup
+
+**Screen 2 — Recommendation result**
+- Ranked material recommendation (1 primary + maybe 1 alternative)
+- Key specs shown as simple bars or icons, not raw numbers only — "Oxygen barrier: Moderate" reads better to a farmer than "OTR 2,500 cc/m²/day"; put the raw number in an expandable "technical details" toggle (this mirrors PackSmart AI's beginner/expert mode, and you should have it too — it's table stakes now, not a differentiator)
+- "Why this material?" — one or two lines pulled from your data, not hardcoded per commodity, generated from the property values (e.g. "High respiration rate needs breathable film" when `respiration_class` is High/Very High)
+
+**Screen 3 — India Compliance Layer (this is the screen you spend the most demo time on)**
+- FSSAI Schedule + food category shown
+- BIS IS code + one-line scope ("IS 10146 — polyethylene film specifications for food contact")
+- Migration limit flag if plastic
+- NABL certificate reminder
+- Labelling checklist (auto-populated, checkboxes)
+- CPCB-EPR flag if plastic, with category
+
+**Screen 4 — Compliance & Packaging Readiness Sheet**
+- One-page bilingual summary of everything above, "Download PDF" button
+- This is your single most demo-able artifact — practice clicking straight to it
+
+**Do not build a login/auth system, a dashboard, or a homepage with marketing copy.** None of that earns points and all of it eats build time.
+
+## 3. The recommendation engine — build the honest version
+
+Don't fake a black-box model. Two legitimate options, pick based on your team's comfort:
+
+- **Simplest defensible version:** a weighted scoring function — score each candidate material against the commodity's moisture/fat/pH/respiration/shelf-life needs using threshold rules derived from your seed data, rank by score. This is not "AI" and you should say so plainly if asked — but it's fast, transparent, and you can explain every recommendation in one sentence, which juries reward.
+- **Slightly more ML-honest version:** train a `scikit-learn` `DecisionTreeClassifier` or `KNeighborsClassifier` on your 15–20 seeded rows (expand synthetically to ~60–100 rows by jittering property values slightly within realistic ranges), predicting `recommended_material`. Report a real train/test accuracy number, however unglamorous — an honest 80% beats an unverifiable 99%.
+
+Either is fine. What sinks you is claiming deep learning or "AI-powered" without being able to say what the model actually is when asked — and someone will ask.
+
+## 4. Bilingual and voice — minimum viable version
+
+- Don't build a translation engine. Hardcode an `en`/`hi` string dictionary for every UI label and every compliance-sheet field — maybe 40–60 strings total. Static, fast, zero risk of mistranslation embarrassing you live.
+- Voice input: Web Speech API `SpeechRecognition`, feed the transcript into your existing autocomplete search. A few hours of work, disproportionate demo impact.
+
+## 5. Tech stack — don't deliberate, just pick this
+
+- Frontend: React (web) or Flutter if your team's more comfortable there — either satisfies the PS's suggested stack
+- Backend: FastAPI (Python) — lets the same codebase host both the scoring/ML logic and the compliance lookup
+- Data: the JSON/SQLite file from step 1, no need for Postgres at prototype scale
+- PDF: `reportlab` or even a styled HTML page you print-to-PDF — don't overbuild this
+
+## 6. Explicitly do not build (say these are roadmap, out loud, on the slide)
+
+- Any live government API/portal integration (NABL, CPCB, FSSAI)
+- Multi-language beyond Hindi/English
+- User accounts, saved history, multi-user features
+- A vendor/supplier marketplace
+- Handling commodities outside your seeded list gracefully — if someone types something you didn't seed, have a clean "not yet supported, here's how we'd extend it" fallback message ready rather than a crash
+
+## Order of operations, realistically
+
+Data table → scoring/ML engine → screens 1–2 → compliance layer (screen 3) → PDF output (screen 4) → bilingual strings → voice input last, since it's the most demo-flashy but least load-bearing piece. If you run out of time, cut voice input before you cut the compliance layer — the compliance layer is why you win, voice input is why you look polished.
+
+Want the actual seed JSON for those 15–20 commodities next, so someone can start wiring screens against real data today?

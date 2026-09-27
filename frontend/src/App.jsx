@@ -1,0 +1,220 @@
+import React, { useState, useEffect } from 'react';
+import { Package, Globe, CheckCircle, ChevronRight, Layers, ShieldCheck, FileCheck2, Cpu } from 'lucide-react';
+import { useLanguage } from './context/LanguageContext';
+import { Screen1Input } from './components/Screen1Input';
+import { Screen2Recommendation } from './components/Screen2Recommendation';
+import { Screen3Compliance } from './components/Screen3Compliance';
+import { Screen4ReadinessSheet } from './components/Screen4ReadinessSheet';
+
+export const App = () => {
+  const { language, toggleLanguage, t } = useLanguage();
+
+  const [commodities, setCommodities] = useState([]);
+  const [selectedCommodity, setSelectedCommodity] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
+  const [complianceData, setComplianceData] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Fetch commodities seed on mount
+  useEffect(() => {
+    fetch('/api/commodities')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.commodities && data.commodities.length > 0) {
+          setCommodities(data.commodities);
+          setSelectedCommodity(data.commodities[0]); // default to Makhana
+        }
+      })
+      .catch(err => {
+        console.warn("Could not fetch commodities, retrying...", err);
+      });
+  }, []);
+
+  const handleAnalyze = async (inputParams) => {
+    setIsAnalyzing(true);
+    try {
+      // 1. Fetch ML Recommendation & Barrier Specs
+      const recRes = await fetch('/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(inputParams)
+      });
+      const recData = await recRes.json();
+      setRecommendation(recData);
+
+      // 2. Fetch Linked India Compliance Data
+      const qParams = new URLSearchParams();
+      if (inputParams.ph_value !== undefined) qParams.set('ph_value', inputParams.ph_value);
+      if (inputParams.fat_oil_pct !== undefined) qParams.set('fat_oil_pct', inputParams.fat_oil_pct);
+      if (inputParams.moisture_pct !== undefined) qParams.set('moisture_pct', inputParams.moisture_pct);
+      if (inputParams.commodity_name) qParams.set('commodity_name', inputParams.commodity_name);
+      const qStr = qParams.toString() ? `?${qParams.toString()}` : '';
+      const compRes = await fetch(`/api/compliance/${inputParams.commodity_id}${qStr}`);
+      const compData = await compRes.json();
+      setComplianceData(compData);
+
+      // Advance to Screen 2
+      setCurrentStep(2);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) {
+      console.error("Analysis error:", e);
+      alert("Error connecting to packaging recommendation engine. Ensure backend is running on :8000");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const steps = [
+    { num: 1, title: t('step1_nav'), icon: Layers },
+    { num: 2, title: t('step2_nav'), icon: Package },
+    { num: 3, title: t('step3_nav'), icon: ShieldCheck },
+    { num: 4, title: t('step4_nav'), icon: FileCheck2 },
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      {/* Top Navbar */}
+      <header className="no-print bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold shadow-sm">
+              <Package className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-slate-900 text-base leading-tight">PackAI India</span>
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold rounded-md uppercase">
+                  SIH26236
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-500 block">
+                MoFPI · PMFME & ODOP Statutory Packaging Shield
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Language Switcher Button */}
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl text-xs font-bold text-slate-700 transition"
+              title="Toggle Hindi / English"
+            >
+              <Globe className="w-3.5 h-3.5 text-emerald-700" />
+              <span>{language === 'en' ? 'हिंदी में बदलें' : 'Switch to English'}</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Interactive Stepper Navigation */}
+      <nav className="no-print bg-white border-b border-slate-200 px-4 py-3">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
+          {steps.map((step, idx) => {
+            const Icon = step.icon;
+            const isActive = currentStep === step.num;
+            const isCompleted = currentStep > step.num;
+            const isClickable = step.num === 1 || (recommendation && complianceData);
+
+            return (
+              <React.Fragment key={step.num}>
+                <button
+                  type="button"
+                  disabled={!isClickable}
+                  onClick={() => isClickable && setCurrentStep(step.num)}
+                  className={`flex items-center gap-2 text-xs md:text-sm font-semibold transition ${
+                    isActive
+                      ? 'text-emerald-700'
+                      : isCompleted
+                      ? 'text-slate-700 hover:text-emerald-600'
+                      : 'text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition ${
+                      isActive
+                        ? 'bg-emerald-700 text-white ring-4 ring-emerald-100'
+                        : isCompleted
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-slate-200 text-slate-500'
+                    }`}
+                  >
+                    {isCompleted ? <CheckCircle className="w-4 h-4" /> : step.num}
+                  </div>
+                  <span className="hidden sm:inline">{step.title}</span>
+                </button>
+                {idx < steps.length - 1 && (
+                  <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 md:py-8">
+        {currentStep === 1 && (
+          <Screen1Input
+            commodities={commodities}
+            selectedCommodity={selectedCommodity}
+            onSelectCommodity={setSelectedCommodity}
+            onAnalyze={handleAnalyze}
+            isAnalyzing={isAnalyzing}
+          />
+        )}
+
+        {currentStep === 2 && recommendation && (
+          <Screen2Recommendation
+            recommendation={recommendation}
+            onNext={() => {
+              setCurrentStep(3);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBack={() => {
+              setCurrentStep(1);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {currentStep === 3 && complianceData && (
+          <Screen3Compliance
+            complianceData={complianceData}
+            onNext={() => {
+              setCurrentStep(4);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onBack={() => {
+              setCurrentStep(2);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {currentStep === 4 && recommendation && complianceData && (
+          <Screen4ReadinessSheet
+            recommendation={recommendation}
+            complianceData={complianceData}
+            onBack={() => {
+              setCurrentStep(3);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="no-print bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <span>Smart India Hackathon 2026 · Problem Statement SIH26236 (Software Edition)</span>
+          <span className="font-medium text-emerald-800">MoFPI Decision Support Prototype · Offline-First Architecture</span>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;

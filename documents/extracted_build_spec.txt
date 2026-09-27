@@ -1,0 +1,331 @@
+Total pages: 6
+
+=== PAGE 1 ===
+SIH26236 — Master Build Spec
+AI-Based Intelligent Food Packaging Material Recommendation
+System for Food Commodities Ministry of Food Processing
+Industries (MoFPI) · Theme: Agriculture, FoodTech & Rural
+Development · Category: Software
+1. The Problem Statement — what MoFPI
+actually asked for
+Inputs a solution must accept: commodity type, moisture content,
+oil/fat content, pH, respiration rate, desired shelf life, storage
+temperature, relative humidity, transport conditions, storage type
+(ambient/chilled/frozen).
+Outputs a solution must produce: recommended packaging
+material (LDPE, HDPE, PET, metalized ﬁlms, aluminium foil laminates,
+biodegradable ﬁlms, breathable ﬁlms) plus speciﬁcations — OTR,
+WVTR, ﬁlm thickness, sealability, gas permeability, mechanical
+strength, MAP suitability.
+Optional extras the PS itself invites: shelf-life prediction,
+sustainability analysis, cost optimization, QR-based traceability, eco-
+friendly packaging recommendations.
+Important: the oﬀicial brief does not mention regulatory compliance
+anywhere. That’s our diﬀerentiator layer, not the literal ask — so the
+core AI/ML recommendation engine must be real and demonstrable
+on its own, with the compliance layer built on top.
+2. Our Solution — the one-line version
+A bilingual packaging recommendation engine that doesn’t stop
+at “what material the science suggests” — it also tells the
+processor exactly which FSSAI Schedule their food falls under,
+which BIS IS code that material must legally meet, what their
+label must legally say, and whether they need CPCB-EPR
+registration. Built around real PMFME/ODOP commodities, in
+Hindi and English, oﬄine-ﬁrst.
+Three layers: 1. Core recommendation engine — satisﬁes the
+literal PS ask (property-based material + spec recommendation) 2.
+India Compliance Layer — our actual diﬀerentiator (FSSAI + BIS +
+labelling + EPR + NABL, chained) 3. Accessibility layer —
+Hindi/English, voice input, oﬄine-ﬁrst, PMFME/ODOP-speciﬁc seed
+data
+3. What Makes Us Unique —
+distinguishing factors
+The strongest known competitor (PackSmart AI — ML
+recommendation, respiration/MAP science, shelf-life simulator, cost
+calculator, sustainability scoring, PDF reports, farmer/researcher
+modes) has zero mention of FSSAI, BIS, Legal Metrology, Hindi, or
+any Indian regulation anywhere. That is the one clean, veriﬁed gap in
+an otherwise sophisticated ﬁeld — don’t claim we’re more advanced
+everywhere, claim we close the one gap nobody else has touched.
+
+=== PAGE 2 ===
+Existing tools
+Us
+Core engine
+ML + material
+science
+Same, plus versioned
+compliance layer
+Regulatory citation
+None found
+anywhere in the ﬁeld
+FSSAI Schedule +
+BIS IS code +
+migration limit, per
+recommendation
+Label compliance
+Not covered
+Auto-generated
+Labelling & Display
+checklist
+Language
+English only
+Hindi + English,
+voice-enabled
+Target framing
+Generic global
+sustainability
+PMFME/ODOP
+scheme beneﬁciary
+Connectivity
+Hosted web app only
+Oﬄine-ﬁrst
+Output
+On-screen result
+Downloadable,
+printable compliance
+sheet
+Why this survives copying: a competitor can copy the headline
+(“add compliance”) in an afternoon, but correctly chaining Schedule
+IV (food category → material class) with Schedule I–III (material class
+→ IS code), plus a separate labelling regulation, plus EPR, plus real
+PMFME commodities, plus bilingual + voice, all working live — that’s
+ﬁve compounding pieces of real research nobody replicates at this
+depth under the same time pressure.
+4. Full Build Spec — point by point
+4.1 Data layer (build this ﬁrst, before any UI)
+One JSON ﬁle or SQLite table, one row per commodity. Fields:
+name_en, name_hi
+category — fruit/vegetable, grain/millet, spice, dairy, dry snack,
+oil/fat product, etc.
+moisture_pct, fat_oil_pct, ph_range
+respiration_class — Very Low / Low / Moderate / High / Very High
+/ Extremely High (Kader’s bands)
+storage_type — ambient / chilled / frozen
+shelf_life_target_days
+recommended_material — LDPE / HDPE / PET / BOPP / metalized ﬁlm
+/ aluminium foil laminate / biodegradable ﬁlm
+otr_range, wvtr_range, thickness_um
+map_suitable (bool) + gas mix if yes
+fssai_schedule — Schedule I/II/III (material class) + Schedule IV
+(food-category mapping)
+bis_code — e.g. IS 10146
+migration_note — ﬂag for plastics: 60 mg/kg or 10 mg/dm², tested
+per IS 9845
+epr_flag (bool) — true if plastic, plus category
+(rigid/ﬂexible/multilayer/compostable)
+nabl_note — standard reminder text (conformity certiﬁcate
+required)
+labelling_checklist — one shared template across all commodities
+4.2 Seed commodities (15–20, PMFME/ODOP-real,
+not generic)
+Makhana (Bihar) · ragi/bajra/jowar millets · moringa (Tamil
+Nadu/Andhra) · turmeric (Telangana) · minor forest produce
+(tendu/mahua, tribal districts) · pickle · papad · jaggery · honey · dried
+
+=== PAGE 3 ===
+fruits · spice blends · ghee.
+4.3 Reference data to seed OTR/WVTR (verify before
+ﬁnal lock, but legitimate published ranges)
+Material
+OTR
+(cc/m²/day,
+~25µm, 23°C)
+WVTR
+(g/m²/day,
+~25µm,
+38°C/90%RH)
+Barrier rating
+LDPE
+7,000–8,500
+16–23
+Poor
+BOPP/OPP
+1,000–2,500
+3.9–6.2
+Moderate
+HDPE
+—
+4.7–7.8
+Moderate
+CPP
+2,300–3,100
+9.3–11
+Moderate
+EVOH
+0.1–0.2
+22–124
+High (O₂)
+Aluminium foil
+laminate
+~0
+~0
+Excellent
+Cite test standards alongside: ASTM D3985/ISO 15105-2 (OTR),
+ASTM F1249/ISO 15106 (WVTR).
+4.4 Screens — build in this order
+Screen 1 — Commodity input - Text search + microphone icon (Web
+Speech API, lang="hi-IN" or "en-IN") - Language toggle top-right,
+persists through the whole ﬂow - Autocomplete against seeded list
+only (no free text — breaks the demo if unseeded) - Optional property
+sliders (moisture, fat, pH, shelf life, storage type) pre-ﬁlled but
+overridable
+Screen 2 — Recommendation result - Ranked material (1 primary
++ 1 alternative) - Specs as simple bars/icons (“Oxygen barrier:
+Moderate”), raw numbers behind an expandable “technical details”
+toggle - “Why this material?” — one line generated from the property
+values, not hardcoded per commodity
+Screen 3 — India Compliance Layer (spend the most demo time
+here) - FSSAI Schedule + food category - BIS IS code + one-line
+scope - Migration limit ﬂag if plastic - NABL certiﬁcate reminder -
+Labelling checklist (checkboxes) - CPCB-EPR ﬂag if plastic, with
+category
+Screen 4 — Compliance & Packaging Readiness Sheet - One-
+page bilingual summary, “Download PDF” button - Your single most
+demo-able artifact — rehearse clicking straight to it
+Do not build: login/auth, dashboard, marketing homepage.
+4.5 Recommendation engine — the honest version
+Pick one, be able to explain it plainly under questioning: - Rule-based
+scoring: weighted score of candidate materials against
+moisture/fat/pH/respiration/shelf-life thresholds derived from seed
+data. Not “AI” — say so if asked. Fast, transparent, explainable in one
+sentence. - Lightweight ML: scikit-learn DecisionTreeClassifier or 
+KNeighborsClassifier, trained on the seeded rows (expand to ~60–100
+via small realistic jitter), predicting recommended_material. Report a
+real accuracy number, however unglamorous.
+Never claim deep learning or unexplained “AI-powered” — someone
+will ask what the model actually is.
+4.6 Bilingual + voice
+Hardcode an en/hi string dictionary (~40–60 strings) across all
+
+=== PAGE 4 ===
+screens and the PDF — no translation engine
+Voice input: Web Speech API SpeechRecognition feeding the existing
+autocomplete
+4.7 Tech stack
+Frontend: React or Flutter
+Backend: FastAPI (Python) — hosts both scoring/ML and
+compliance lookup
+Data: JSON/SQLite (no need for Postgres at this scale)
+PDF: reportlab or styled HTML → print-to-PDF
+4.8 Explicitly cut, mention only as roadmap on the
+slide
+Live NABL/CPCB/FSSAI API or portal integration
+Multi-language beyond Hindi/English
+User accounts, saved history
+Vendor/supplier marketplace
+Ungraceful handling of unseeded commodities — have one clean
+fallback message ready instead of a crash
+5. Regulatory reference sheet — verify
+every one of these before locking data
+Food Safety and Standards (Packaging) Regulations, 2018 —
+Schedule I (paper/board), Schedule II (metal/alloys), Schedule III
+(plastics), Schedule IV (food-category → material mapping)
+Polyethylene → IS 10146 · Polystyrene → IS 10142 · PET → IS
+12252
+General wrapping paper → IS 6615 · Folding box board → IS 1776 ·
+Aluminium foil → IS 8970 · Greaseproof paper → IS 6622
+Overall migration limit: 60 mg/kg or 10 mg/dm², tested per IS
+9845
+Food Safety and Standards (Labelling and Display) Regulations,
+2018 — FSSAI logo + 14-digit license number, net quantity, MRP,
+batch/lot number, mfg/best-before/expiry dates, veg/non-veg mark,
+ingredient list, consumer care details
+Plastic Waste Management Rules (as amended) — CPCB EPR
+framework, registration on the CPCB EPR portal, categories:
+rigid/ﬂexible/multilayer/compostable
+NABL-accredited lab conformity certiﬁcate — required for food-
+contact packaging materials
+Kader, A.A. (2002), Postharvest Technology of Horticultural Crops,
+UC Davis, 3rd ed. — respiration rate classiﬁcation
+PMFME Scheme, MoFPI — 2 lakh credit-linked beneﬁciaries
+achieved, ~11 lakh direct + indirect jobs generated, 44% women,
+ODOP approach (use these numbers, not “26 lakh”)
+6. PPT — 5 slides, condensed reference
+1. PS + Solution + USP + Distinguishing Factors — header strip
+(PS ID, title, ministry, theme), one-line pitch, 4–6 USP bullets, the
+comparison table from Section 3
+2. Technical Approach + Stack + Architecture + Workﬂow — 5-
+stage pipeline: commodity input → AI recommendation engine →
+material + specs → India compliance layer → compliance sheet;
+name real components (React/Flutter, FastAPI, scikit-learn,
+JSON/SQLite, reportlab)
+3. Feasibility, Viability, Challenges + Mitigation — technical
+feasibility (low-risk, proven components), named risk table (stale
+regulatory data → versioned dataset; paid BIS standards → cite
+
+=== PAGE 5 ===
+codes not full text; no smartphone → SMS/IVR or DRP-assisted;
+wrong advice → advisory disclaimer; small ML sample → honest
+accuracy)
+4. Impact + Beneﬁts — lead with 11 lakh jobs tied to PMFME,
+narrow to reduced non-compliant packaging + spoilage + easier
+formal licensing + early EPR awareness; one line on SDG 2/9/12
+5. References — the full list in Section 5 above
+Persona for the opening line: a makhana processor in Katihar or a
+moringa FPO in Tamil Nadu who took a PMFME loan, has no
+packaging engineer, and currently copies whatever pouch the local
+supplier stocks with no way to check if it’s even legal.
+Never name a speciﬁc competitor repo on the slide — keep the
+direct comparison loaded for verbal Q&A only.
+7. Timeline — submission on the 29th,
+building today and tomorrow
+When
+Do
+Today AM
+Lock schema + name; start
+ﬁlling all 15–20 commodity rows;
+scaﬀold FastAPI + stub scoring
+function; build all 4 screens
+against dummy data; write PPT
+skeleton + jury-question answers
+Today PM
+Finish regulatory ﬁelds per
+commodity, cross-check every IS
+code; wire real scoring to ﬁrst
+few commodities; swap
+dummy→real data as rows land;
+ﬁll Slide 2 + 5
+Tomorrow AM
+Build Screen 3 + 4 (compliance
+layer + PDF) — highest-value
+screens; ﬁnish labelling
+checklist; ﬁnalize Slide 1, 3, 4
+Tomorrow PM
+Bilingual string pass; add voice
+input; full bug bash across every
+seeded commodity on the actual
+demo device
+Tomorrow eve
+Record video backup of a full
+run-through; read PPT aloud
+once with a timer; assign Q&A
+roles by topic
+29th
+No new features — verify every
+citation number one ﬁnal time,
+test on the real presentation
+setup, submit with buﬀer before
+the deadline
+8. Jury Q&A — script these answers now,
+word for word
+“Who actually faces this problem today?” → the named
+persona above, not the problem statement read back
+“This already exists, why yours?” → existing tools are science-
+ﬁrst, English-only, built for a global audience; we’re the only one
+chaining the same science to India’s FSSAI Schedule + BIS +
+labelling + EPR requirements, in Hindi, seeded on real
+PMFME/ODOP commodities
+
+=== PAGE 6 ===
+“Why hasn’t anyone solved this yet?” → the regulatory data is
+public but scattered across separate FSSAI PDFs and paid BIS
+documents; no consumer-facing packaging-AI product has
+bothered to structure it because their market doesn’t need Indian
+citations
+“What’s your accuracy?” → give the real number from your
+trained model, plus its known weak spot
+“What happens when the model is wrong?” → advisory
+decision-support tool, disclaimer on every output, recommend
+veriﬁcation with a licensed consultant/NABL lab before
+commercial use
