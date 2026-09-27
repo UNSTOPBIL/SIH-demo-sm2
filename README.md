@@ -27,47 +27,94 @@ In India's agro-food processing sector, micro-enterprises, Farmer Producer Organ
 ## 🏛️ Interactive System Architecture
 
 ```mermaid
-flowchart TD
-    subgraph UI["1. Multimodal Presentation Layer (React 18 + Vite)"]
-        A1["Voice Input (Web Speech API - hi-IN & en-IN)"]
-        A2["18 Seeded PMFME/ODOP Crops + Custom Crop Studio"]
-        A3["Environmental Sliders (T: 4-45°C, RH: 20-95%)"]
-        A4["2.5D Laminate Structure Visualizer"]
-        A5["Dynamic Shelf-Life Kinetics Simulator (SVG)"]
-        A6["FSSAI 2020 SVG Mandatory Label Mockup"]
+graph TD
+    %% Custom Styling Palette
+    classDef client fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#166534,font-weight:bold;
+    classDef frontend fill:#ecfeff,stroke:#0891b2,stroke-width:2px,color:#155e75;
+    classDef api fill:#f8fafc,stroke:#475569,stroke-width:2px,color:#1e293b;
+    classDef engine fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#3730a3;
+    classDef legal fill:#fffbeb,stroke:#d97706,stroke-width:2px,color:#92400e;
+    classDef output fill:#fdf2f8,stroke:#db2777,stroke-width:2px,color:#9d174d,font-weight:bold;
+
+    %% 1. Client & Multimodal Input Tier
+    subgraph ClientTier ["1. User & Multimodal Input Tier"]
+        User["PMFME Food Processor / FPO Enterprise"]:::client
+        VoiceInput["Web Speech Recognition (Bilingual hi-IN & en-IN)"]:::client
+        CropSelector["18 Seeded ODOP Crops OR Custom Crop Studio"]:::client
+        ParamSliders["Environmental Controls (Temp: 4-45°C, RH: 20-95%)"]:::client
     end
 
-    subgraph API["2. API Gateway & Micro-Services (FastAPI)"]
-        B1["POST /api/recommend (Barrier Solver & ML Inference)"]
-        B2["GET /api/compliance/{id} (Statutory Rules & Simulants)"]
-        B3["POST /api/export-pdf (ReportLab 1-Page Generator)"]
-        B4["GET /api/commodities & /api/translations (Bilingual)"]
+    %% 2. Frontend Application Layer
+    subgraph FrontendTier ["2. Client-Side Dashboard (React 18 + Vite)"]
+        SPA["React Application Coordinator (App.jsx)"]:::frontend
+        LaminateViz["2.5D Multi-Layer Laminate Visualizer"]:::frontend
+        DecaySim["Biophysical Shelf-Life SVG Simulator"]:::frontend
+        LabelMock["FSSAI 2020 SVG Pouch Label Studio"]:::frontend
     end
 
-    subgraph Core["3. Biophysical Kinetics & Material Science Engine"]
-        C1["Tetens Saturation Vapor Pressure: ps(T)"]
-        C2["Moisture Sorption Kinetics: Target WVTR (g/m²/day)"]
-        C3["Lipid Oxidation & Arrhenius Q10: Target OTR (cc/m²/day)"]
-        C4["Respiration Permeation Matching (EMAP)"]
-        C5["Multi-Criteria Barrier Laminate Constraint Solver"]
-        C6["Scikit-Learn Decision Tree (Stratified 5-Fold CV: 92.2%)"]
-        C7["Physics Authoritative Veto Logic"]
+    %% 3. API Gateway Tier
+    subgraph APITier ["3. FastAPI Gateway & Endpoint Layer"]
+        RecEndpoint["POST /api/recommend (Laminate & ML Solver)"]:::api
+        CompEndpoint["GET /api/compliance/{id} (Statutory Rules)"]:::api
+        PDFEndpoint["POST /api/export-pdf (ReportLab Generator)"]:::api
     end
 
-    subgraph Legal["4. Indian Statutory Compliance & Certification Layer"]
-        D1["FSSAI Packaging Regulations, 2018 (Schedule IV & I/II/III)"]
-        D2["Bureau of Indian Standards (BIS Contact Standards: IS 10146, IS 12252, etc.)"]
-        D3["IS 9845 Migration Matrix (Simulants A, B, C, D: 60 mg/kg OML)"]
-        D4["CPCB Plastic Waste Management & EPR (Category I - IV)"]
-        D5["FSSAI 2020 9-Point Mandatory Front/Back Display Checklist"]
-        D6["Official 1-Page PMFME Packaging Readiness Certificate (PDF)"]
+    %% 4. Biophysical & ML Engine
+    subgraph EngineTier ["4. Biophysical Kinetics & Material Science Engine"]
+        TetensFormula["Tetens Equation (Saturation Vapor Pressure ps)"]:::engine
+        WVTRKinetics["Fickian Sorption Kinetics (Target WVTR)"]:::engine
+        OTRKinetics["Arrhenius Q10 & Respiration (Target OTR)"]:::engine
+        SolverCore["Constraint Solver (Triplex / Foil / EVOH / EMAP)"]:::engine
+        MLModel["Scikit-Learn DecisionTree (92.2% CV Accuracy)"]:::engine
+        PhysicsVeto["Authoritative Biophysical Veto (Safety Factor >= 1.0)"]:::engine
     end
 
-    UI -->|JSON REST Payload| API
-    API --> Core
-    Core --> Legal
-    Legal -->|Bilingual Readiness Bundle| API
-    API -->|Realtime Reactive State| UI
+    %% 5. Statutory Compliance & Regulations Layer
+    subgraph LegalTier ["5. Indian Statutory Compliance & Certification Layer"]
+        FSSAI_Sched["FSSAI Packaging 2018 (Schedule IV & I/II/III)"]:::legal
+        BIS_Codes["BIS Indian Standards (IS 10146, IS 12252, IS 8970)"]:::legal
+        IS9845_Matrix["IS 9845 Overall Migration Limits (Simulants A-D)"]:::legal
+        CPCB_EPR["CPCB Plastic Waste Management & EPR (Category I-IV)"]:::legal
+        FSSAI_Check["FSSAI 2020 9-Point Mandatory Display Checklist"]:::legal
+    end
+
+    %% 6. Deliverables & Output Artifacts
+    subgraph DeliverablesTier ["6. Statutory Deliverables & Visual Artifacts"]
+        LaminateSpec["Engineered Food-Grade Laminate Specification"]:::output
+        ReadinessCert["Official 1-Page PMFME Packaging Readiness Certificate (PDF)"]:::output
+    end
+
+    %% Inter-Tier Connections
+    User --> VoiceInput
+    User --> CropSelector
+    User --> ParamSliders
+
+    VoiceInput --> SPA
+    CropSelector --> SPA
+    ParamSliders --> SPA
+
+    SPA -->|1. Submit Commodity Physics & Climate| RecEndpoint
+    SPA -->|2. Request Regulatory Rules & Simulants| CompEndpoint
+
+    RecEndpoint --> TetensFormula --> WVTRKinetics
+    RecEndpoint --> OTRKinetics
+    WVTRKinetics & OTRKinetics --> SolverCore
+    RecEndpoint --> MLModel
+    SolverCore & MLModel --> PhysicsVeto
+
+    PhysicsVeto --> FSSAI_Sched & BIS_Codes & IS9845_Matrix & CPCB_EPR
+    CompEndpoint --> FSSAI_Check & IS9845_Matrix
+
+    PhysicsVeto -->|Target WVTR / OTR & Selected Layers| SPA
+    FSSAI_Sched & BIS_Codes & IS9845_Matrix & CPCB_EPR -->|Statutory Standards| SPA
+
+    SPA --> LaminateViz
+    SPA --> DecaySim
+    SPA --> LabelMock
+    SPA --> LaminateSpec
+
+    SPA -->|3. Compile Official Verification Payload| PDFEndpoint
+    PDFEndpoint -->|Generate Printable A4 Stream| ReadinessCert
 ```
 
 ---
