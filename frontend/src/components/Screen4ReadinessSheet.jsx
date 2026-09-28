@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Printer, ArrowLeft, CheckCircle, FileCheck, Building, ShieldCheck, Sparkles, RefreshCw, QrCode } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { API_BASE } from '../apiConfig';
 
 export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, onOpenPassport }) => {
   const { language, t } = useLanguage();
@@ -17,7 +18,7 @@ export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, 
         ...complianceData
       };
 
-      const res = await fetch('/api/export-pdf', {
+      const res = await fetch(`${API_BASE}/api/export-pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

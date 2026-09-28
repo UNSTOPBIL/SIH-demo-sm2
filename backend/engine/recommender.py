@@ -4,15 +4,26 @@ from typing import Dict, Any, Optional
 import joblib
 import pandas as pd
 
-from backend.engine.physics_engine import (
-    calculate_target_wvtr,
-    calculate_target_otr,
-    solve_optimal_laminate,
-    generate_shelf_life_decay_curves,
-    get_is9845_simulant_matrix
-)
-from backend.engine.economics_engine import evaluate_converter_economics
-from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
+try:
+    from backend.engine.physics_engine import (
+        calculate_target_wvtr,
+        calculate_target_otr,
+        solve_optimal_laminate,
+        generate_shelf_life_decay_curves,
+        get_is9845_simulant_matrix
+    )
+    from backend.engine.economics_engine import evaluate_converter_economics
+    from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
+except (ImportError, ModuleNotFoundError):
+    from engine.physics_engine import (
+        calculate_target_wvtr,
+        calculate_target_otr,
+        solve_optimal_laminate,
+        generate_shelf_life_decay_curves,
+        get_is9845_simulant_matrix
+    )
+    from engine.economics_engine import evaluate_converter_economics
+    from engine.sustainability_engine import calculate_carbon_and_epr_footprint
 
 def load_seed_commodities():
     seed_path = os.path.join(os.path.dirname(__file__), "..", "data", "commodities_seed.json")

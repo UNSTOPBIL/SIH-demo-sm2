@@ -1,0 +1,41 @@
+{
+  "voice": "en-IN-PrabhatNeural",
+  "audios": [
+    {
+      "id": "audio1_intro",
+      "title": "Intro & Team Katsuro",
+      "file": "audio/audio1_intro.mp3",
+      "duration_sec": 13.968,
+      "text": "Respected evaluators, Team Katsuro presents Pack A-I India for Smart India Hackathon 2026, Problem Statement S-I-H 26236 under the Ministry of Food Processing Industries."
+    },
+    {
+      "id": "audio2_problem",
+      "title": "Problem Statement Breakdown",
+      "file": "audio/audio2_problem.mp3",
+      "duration_sec": 21.648,
+      "text": "India's P-M-F-M-E and O-D-O-P schemes empower over two lakh food micro-enterprises, yet processors lose up to 30 percent of agricultural produce due to empirical packaging and F-S-S-A-I non-compliance. Existing global tools are English-only and ignore Indian law. Pack A-I India closes this gap."
+    },
+    {
+      "id": "audio3_physics",
+      "title": "Screen 1 & 2: Biophysics & Kinetics",
+      "file": "audio/audio3_physics.mp3",
+      "duration_sec": 43.8,
+      "text": "Demonstrating with Foxnut, or Mithila Makhana from Bihar. Using simulation presets, we stress-test under extreme tropical warehousing at 42 degrees Celsius and 90 percent humidity. Applying the Tetens saturation vapor pressure equation, the engine calculates required W-V-T-R and O-T-R thresholds. Under this tropical moisture demand, the solver rejects mono-films and engineers an optimal three-layer Aluminium Foil barrier triplex. The converter economics module calculates composite G-S-M at 92.3, unit cost at 82 paise, and demonstrates a 400 percent spoilage prevention R-O-I."
+    },
+    {
+      "id": "audio4_compliance",
+      "title": "Screen 3 & 4: Statutory Shield & PDF",
+      "file": "audio/audio4_compliance.mp3",
+      "duration_sec": 35.808,
+      "text": "Advancing to the India Statutory Shield, Pack A-I India automatically chains national regulations: F-S-S-A-I 2018 Packaging Schedule Four, mandatory B-I-S standard I-S 10146, and the I-S 9845 migration simulant protocol across distilled water, acetic acid, and iso-octane, while classifying under C-P-C-B E-P-R Category Three. Micro-enterprises can instantly export an official, audit-ready one-page A4 P-D-F readiness certificate generated via ReportLab."
+    },
+    {
+      "id": "audio5_passport_auditor",
+      "title": "Passport, Auditor & Architecture Closing",
+      "file": "audio/audio5_passport_auditor.mp3",
+      "duration_sec": 34.464,
+      "text": "Every batch receives a cryptographically verifiable Digital Product Passport with an S-H-A 256 seal and N-A-B-L testing protocol. Furthermore, our reverse label artwork auditor tests draft packaging against F-S-S-A-I 2020 Display and Legal Metrology rules, flagging missing license digits and allergen alerts. Engineered with FastAPI and Scikit-Learn achieving 92.2 percent accuracy, Team Katsuro delivers institutional-grade packaging engineering. Thank you."
+    }
+  ],
+  "total_duration_sec": 149.688
+}

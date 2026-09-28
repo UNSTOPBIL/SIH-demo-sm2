@@ -1,0 +1,10 @@
+.git
+.pytest_cache
+__pycache__
+*.pyc
+*.mp4
+*.webm
+documents
+scripts
+frontend/node_modules
+node_modules

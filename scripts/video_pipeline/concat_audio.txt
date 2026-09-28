@@ -1,0 +1,5 @@
+file 'D:/.anti/.sih(2)/scripts/video_pipeline/audio/audio1_intro.mp3'
+file 'D:/.anti/.sih(2)/scripts/video_pipeline/audio/audio2_problem.mp3'
+file 'D:/.anti/.sih(2)/scripts/video_pipeline/audio/audio3_physics.mp3'
+file 'D:/.anti/.sih(2)/scripts/video_pipeline/audio/audio4_compliance.mp3'
+file 'D:/.anti/.sih(2)/scripts/video_pipeline/audio/audio5_passport_auditor.mp3'

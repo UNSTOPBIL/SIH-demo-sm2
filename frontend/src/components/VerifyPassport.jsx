@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../apiConfig';
 import { 
   ShieldCheck, 
   Award, 
@@ -32,7 +33,7 @@ export const VerifyPassport = ({ onBack }) => {
     const commodityId = params.get('id') || 'makhana';
     const laminateId = params.get('laminate');
 
-    let url = `/api/verify/${batchId}?id=${commodityId}`;
+    let url = `${API_BASE}/api/verify/${batchId}?id=${commodityId}`;
     if (laminateId) url += `&laminate_id=${laminateId}`;
 
     fetch(url)

@@ -1,0 +1,9 @@
+{
+  "name": "packai-india",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-Based Intelligent Food Packaging Material Recommendation System (SIH26236)",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build"
+  }
+}

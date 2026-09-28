@@ -1,9 +1,15 @@
 import math
 from typing import Dict, Any, List, Optional
-from backend.engine.economics_engine import (
-    calculate_laminate_gsm,
-    detect_layer_polymer_key
-)
+try:
+    from backend.engine.economics_engine import (
+        calculate_laminate_gsm,
+        detect_layer_polymer_key
+    )
+except (ImportError, ModuleNotFoundError):
+    from engine.economics_engine import (
+        calculate_laminate_gsm,
+        detect_layer_polymer_key
+    )
 
 # Cradle-to-Gate Embodied Carbon Footprint Intensities (kg CO2e / kg resin)
 # Sources: Ecoinvent 3.8 / PlasticsEurope Eco-profiles / Defra Carbon Factors

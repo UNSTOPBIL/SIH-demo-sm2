@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE } from '../apiConfig';
 import { 
   ShieldCheck, 
   AlertTriangle, 
@@ -16,17 +17,47 @@ import {
   Tag
 } from 'lucide-react';
 
+const DEFAULT_COMPLIANT_LABEL = `MITHILA PREMIUM POPPED MAKHANA (FOXNUT)
+Ingredients: Popped Foxnuts (98%), Cold-Pressed Edible Vegetable Oil (1.5%), Pink Rock Salt (0.5%).
+Allergen Advice: Processed in a facility that also handles tree nuts, sesame, and dairy.
+Nutritional Information per 100g:
+Energy: 347 kcal | Protein: 9.7 g | Carbohydrate: 76.2 g | Total Sugars: 0.5 g | Added Sugars: 0.0 g | Total Fat: 0.1 g | Saturated Fat: 0.0 g | Trans Fat: 0.0 g | Sodium: 142 mg.
+Net Quantity: 250 g
+Unit Sale Price: Rs. 0.96 per g
+MRP: Rs. 240.00 (Inclusive of all taxes)
+Batch No: MKH-2026-B08
+Date of Packaging: 15/09/2026
+Best Before: 9 Months from date of packaging
+Veg Logo: 100% Vegetarian (Green circle inside square)
+Manufactured & Marketed By:
+Mithila Agro Processing Enterprises Pvt. Ltd.,
+Plot No. 42, Food Park Phase-I, Industrial Area, Darbhanga, Bihar - 846004.
+Customer Care Executive: support@mithilafoods.in | Helpline: 1800-123-4567
+fssai Lic. No.: 10023081000124
+Recyclable Flexible Laminate: IS 12252 / IS 10146 Food Grade Contact`;
+
+const DEFAULT_NON_COMPLIANT_LABEL = `Tasty Foxnut Snacks - Super Crispy!
+MRP: 200 Rs
+Net wt: 250
+FSSAI: 123456789
+Mfg: Last month
+Good quality food for daily snacking.
+Distributed locally in town.`;
+
 export const LabelAuditor = ({ onBack }) => {
   const [labelText, setLabelText] = useState('');
   const [isAuditing, setIsAuditing] = useState(false);
   const [auditResult, setAuditResult] = useState(null);
-  const [samples, setSamples] = useState({ compliant: '', non_compliant: '' });
+  const [samples, setSamples] = useState({
+    compliant: DEFAULT_COMPLIANT_LABEL,
+    non_compliant: DEFAULT_NON_COMPLIANT_LABEL
+  });
   const [activeTab, setActiveTab] = useState('violations'); // 'violations' or 'passed'
   const [copied, setCopied] = useState(false);
 
   // Fetch sample texts from backend on mount
   useEffect(() => {
-    fetch('/api/audit-samples')
+    fetch(`${API_BASE}/api/audit-samples`)
       .then((res) => res.json())
       .then((data) => {
         setSamples({
@@ -43,7 +74,7 @@ export const LabelAuditor = ({ onBack }) => {
 
     setIsAuditing(true);
     try {
-      const res = await fetch('/api/audit-label', {
+      const res = await fetch(`${API_BASE}/api/audit-label`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ raw_text: targetText })

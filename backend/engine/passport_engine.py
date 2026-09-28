@@ -4,8 +4,12 @@ import uuid
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 
-from backend.engine.compliance import get_compliance_details
-from backend.engine.physics_engine import LAMINATE_CATALOG, get_is9845_simulant_matrix
+try:
+    from backend.engine.compliance import get_compliance_details
+    from backend.engine.physics_engine import LAMINATE_CATALOG, get_is9845_simulant_matrix
+except (ImportError, ModuleNotFoundError):
+    from engine.compliance import get_compliance_details
+    from engine.physics_engine import LAMINATE_CATALOG, get_is9845_simulant_matrix
 
 
 def generate_passport_hash(batch_id: str, commodity_id: str, laminate_id: str) -> str:

@@ -6,9 +6,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from backend.engine.recommender import recommend_packaging, load_seed_commodities
-from backend.engine.compliance import get_compliance_details
-from backend.engine.pdf_generator import generate_packaging_readiness_pdf
+try:
+    from backend.engine.recommender import recommend_packaging, load_seed_commodities
+    from backend.engine.compliance import get_compliance_details
+    from backend.engine.pdf_generator import generate_packaging_readiness_pdf
+except (ImportError, ModuleNotFoundError):
+    from engine.recommender import recommend_packaging, load_seed_commodities
+    from engine.compliance import get_compliance_details
+    from engine.pdf_generator import generate_packaging_readiness_pdf
 
 app = FastAPI(
     title="SIH26236 AI Food Packaging Recommendation System",
@@ -100,10 +105,16 @@ def get_commodity_compliance(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-from backend.engine.economics_engine import evaluate_converter_economics
-from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
-from backend.engine.audit_engine import audit_packaging_label, SAMPLE_COMPLIANT_LABEL, SAMPLE_NON_COMPLIANT_LABEL
-from backend.engine.passport_engine import get_digital_product_passport
+try:
+    from backend.engine.economics_engine import evaluate_converter_economics
+    from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
+    from backend.engine.audit_engine import audit_packaging_label, SAMPLE_COMPLIANT_LABEL, SAMPLE_NON_COMPLIANT_LABEL
+    from backend.engine.passport_engine import get_digital_product_passport
+except (ImportError, ModuleNotFoundError):
+    from engine.economics_engine import evaluate_converter_economics
+    from engine.sustainability_engine import calculate_carbon_and_epr_footprint
+    from engine.audit_engine import audit_packaging_label, SAMPLE_COMPLIANT_LABEL, SAMPLE_NON_COMPLIANT_LABEL
+    from engine.passport_engine import get_digital_product_passport
 
 class EconomicsRequest(BaseModel):
     structure: Dict[str, Any]

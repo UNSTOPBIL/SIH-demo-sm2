@@ -1,7 +1,10 @@
 import json
 import os
 from typing import Dict, Any, List, Optional
-from backend.engine.physics_engine import get_is9845_simulant_matrix
+try:
+    from backend.engine.physics_engine import get_is9845_simulant_matrix
+except (ImportError, ModuleNotFoundError):
+    from engine.physics_engine import get_is9845_simulant_matrix
 
 def load_seed_commodities() -> List[Dict[str, Any]]:
     seed_path = os.path.join(os.path.dirname(__file__), "..", "data", "commodities_seed.json")

@@ -9,7 +9,19 @@
 [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
 [![Scikit-Learn](https://img.shields.io/badge/ML%20Accuracy-92.2%25%20CV-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org)
 [![FSSAI & BIS](https://img.shields.io/badge/Compliance-FSSAI%20%7C%20BIS%20%7C%20CPCB-138808?style=for-the-badge)](https://fssai.gov.in)
-[![Offline-First](https://img.shields.io/badge/Offline%20First-Zero%20External%20APIs-22C55E?style=for-the-badge)](#)
+[![Vercel Production](https://img.shields.io/badge/Vercel-Live%20Production-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://packai-frontend-beta.vercel.app)
+[![Hugging Face Space](https://img.shields.io/badge/Hugging%20Face-Live%20Space-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://ustop-packai-india.static.hf.space)
+
+---
+
+### 🌐 Live Public Deployments & Quick Links
+
+| Service | Hosting Platform | URL | Status |
+| :--- | :--- | :--- | :--- |
+| **PackAI Web Studio (Production)** | Vercel | [https://packai-frontend-beta.vercel.app](https://packai-frontend-beta.vercel.app) | 🟢 Live & Operational |
+| **PackAI Space (Mirror)** | Hugging Face Spaces | [https://ustop-packai-india.static.hf.space](https://ustop-packai-india.static.hf.space) ([Hub](https://huggingface.co/spaces/ustop/packai-india)) | 🟢 Live & Operational |
+| **FastAPI Statutory Gateway** | Vercel Serverless | [https://backend-delta-ashy-q47w8f4i7f.vercel.app/api/health](https://backend-delta-ashy-q47w8f4i7f.vercel.app/api/health) | 🟢 Live (HTTP 200) |
+| **Demo Walkthrough Video** | High-Def MP4 (1080p) | [`sih26236_final_demo.mp4`](file:///d:/.anti/.sih%282%29/sih26236_final_demo.mp4) | 🎬 Ready for YouTube |
 
 ---
 

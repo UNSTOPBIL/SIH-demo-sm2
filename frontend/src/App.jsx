@@ -8,6 +8,7 @@ import { Screen3Compliance } from './components/Screen3Compliance';
 import { Screen4ReadinessSheet } from './components/Screen4ReadinessSheet';
 import { VerifyPassport } from './components/VerifyPassport';
 import { LabelAuditor } from './components/LabelAuditor';
+import { API_BASE } from './apiConfig';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -70,7 +71,7 @@ export const App = () => {
 
   // Fetch commodities seed on mount
   useEffect(() => {
-    fetch('/api/commodities')
+    fetch(`${API_BASE}/api/commodities`)
       .then(res => res.json())
       .then(data => {
         if (data && data.commodities && data.commodities.length > 0) {
@@ -87,7 +88,7 @@ export const App = () => {
     setIsAnalyzing(true);
     try {
       // 1. Fetch ML Recommendation & Barrier Specs
-      const recRes = await fetch('/api/recommend', {
+      const recRes = await fetch(`${API_BASE}/api/recommend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inputParams)
@@ -102,7 +103,7 @@ export const App = () => {
       if (inputParams.moisture_pct !== undefined) qParams.set('moisture_pct', inputParams.moisture_pct);
       if (inputParams.commodity_name) qParams.set('commodity_name', inputParams.commodity_name);
       const qStr = qParams.toString() ? `?${qParams.toString()}` : '';
-      const compRes = await fetch(`/api/compliance/${inputParams.commodity_id}${qStr}`);
+      const compRes = await fetch(`${API_BASE}/api/compliance/${inputParams.commodity_id}${qStr}`);
       const compData = await compRes.json();
       setComplianceData(compData);
 

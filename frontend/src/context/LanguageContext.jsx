@@ -176,12 +176,14 @@ const fallbackTranslations = {
 
 const LanguageContext = createContext();
 
+import { API_BASE } from '../apiConfig';
+
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('en');
   const [dict, setDict] = useState(fallbackTranslations);
 
   useEffect(() => {
-    fetch('/api/translations')
+    fetch(`${API_BASE}/api/translations`)
       .then(res => res.json())
       .then(data => {
         if (data && data.en && data.hi) {
