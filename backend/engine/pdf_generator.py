@@ -229,6 +229,15 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     else:
         layer_breakdown_html = "Outer Print Web (PET/BOPP) / Central Barrier Core (Al-Foil/Met-BOPP) / Inner Heat Sealant (PE)"
 
+    econ = commodity_data.get('economics', {})
+    sust = commodity_data.get('sustainability', {})
+    gsm_val = econ.get('gsm_metrics', {}).get('total_gsm') or specs.get('total_gsm', 73.8)
+    yield_val = econ.get('gsm_metrics', {}).get('film_yield_m2_per_kg') or specs.get('film_yield_m2_per_kg', 13.5)
+    cost_val = econ.get('unit_cost_metrics', {}).get('cost_per_pouch_inr') or specs.get('unit_cost_inr', 0.55)
+    epr_val = sust.get('cpcb_epr_compliance', {}).get('estimated_annual_epr_liability_inr', 5800.0)
+    epr_cat_name = sust.get('cpcb_epr_compliance', {}).get('category_name') or commodity_data.get('epr_category', 'Category III MLP')
+    epr_cat_short = truncate_text(epr_cat_name, 28)
+
     spec_data = [
         [Paragraph("Target Mathematical Demand:", body_bold),
          Paragraph(f"Max Permissible WVTR: <b>{target_wvtr} g/m2/day</b> | Max Allowable OTR: <b>{target_otr} cc/m2/day</b> (Safety Factor: <b>{safety_fac}x</b>)", body_style)],
@@ -238,6 +247,8 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
          Paragraph(layer_breakdown_html, body_style)],
         [Paragraph("Certified Barrier Performance:", body_bold),
          Paragraph(f"OTR: {otr_spec} | WVTR: {wvtr_spec} | MAP Gas Flush: {map_mix}", body_style)],
+        [Paragraph("Converter Economics & EPR:", body_bold),
+         Paragraph(f"Composite GSM: <b>{gsm_val} g/m²</b> (Yield: {yield_val} m²/kg) | Est. Unit Cost: <b>₹{cost_val}/pouch</b> | CPCB EPR: {epr_cat_short} (~₹{epr_val:,.0f}/yr)", body_style)],
         [Paragraph("Bio-Physical Rationale:", body_bold),
          Paragraph(rationale, body_style)]
     ]

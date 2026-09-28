@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, ShieldCheck, Leaf, ArrowRight, ArrowLeft, ChevronDown, ChevronUp, Cpu, Award, Beaker, Layers, Activity, AlertTriangle } from 'lucide-react';
+import { Package, ShieldCheck, Leaf, ArrowRight, ArrowLeft, ChevronDown, ChevronUp, Cpu, Award, Beaker, Layers, Activity, AlertTriangle, IndianRupee, TrendingUp, Recycle, BarChart3, TreePine } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { LaminateVisualizer } from './LaminateVisualizer';
 import { ShelfLifeSimulator } from './ShelfLifeSimulator';
@@ -26,7 +26,9 @@ export const Screen2Recommendation = ({ recommendation, onNext, onBack }) => {
     physics_metrics,
     shelf_life_decay,
     shelf_life_days,
-    warning_flag
+    warning_flag,
+    economics,
+    sustainability
   } = recommendation;
 
   // Rating badge coloring helper
@@ -223,6 +225,143 @@ export const Screen2Recommendation = ({ recommendation, onNext, onBack }) => {
           </div>
         </div>
       </div>
+
+      {/* Module 1: Industrial Converter Economics & Spoilage ROI Card */}
+      {economics && economics.gsm_metrics && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <IndianRupee className="w-5 h-5 text-emerald-600" />
+              <span>Industrial Converter Economics & Pouch Yield</span>
+            </h3>
+            <span className="text-xs bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full font-semibold">
+              Conversion Margin: ₹35/kg included
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Total Composite GSM</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">
+                {economics.gsm_metrics.total_gsm} <span className="text-xs font-normal text-slate-500">g/m²</span>
+              </span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Film Yield</span>
+              <span className="text-lg font-bold text-emerald-700 font-mono">
+                {economics.gsm_metrics.film_yield_m2_per_kg} <span className="text-xs font-normal text-slate-500">m²/kg</span>
+              </span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Pouch Unit Cost</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">
+                ₹{economics.unit_cost_metrics?.cost_per_pouch_inr} <span className="text-xs font-normal text-slate-500">/ pouch</span>
+              </span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Cost per 1,000 Pouches</span>
+              <span className="text-lg font-bold text-slate-900 font-mono">
+                ₹{economics.unit_cost_metrics?.cost_per_1000_pouches_inr?.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          {/* Spoilage vs. Barrier ROI Callout */}
+          {economics.spoilage_roi && (
+            <div className="p-4 bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 rounded-xl border border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs">
+              <div className="space-y-1">
+                <div className="flex items-center gap-1.5 text-emerald-900 font-bold text-sm">
+                  <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  <span>Inventory Protection & Spoilage Prevention ROI</span>
+                </div>
+                <p className="text-slate-600 max-w-xl">
+                  {economics.spoilage_roi.economic_verdict}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="text-right">
+                  <span className="text-[10px] text-slate-400 block uppercase font-bold">Net Financial ROI</span>
+                  <span className="text-lg font-black text-emerald-800">
+                    +{economics.spoilage_roi.roi_percentage}%
+                  </span>
+                </div>
+                <div className="text-right pl-3 border-l border-emerald-200">
+                  <span className="text-[10px] text-slate-400 block uppercase font-bold">Breakeven</span>
+                  <span className="text-lg font-black text-slate-800">
+                    {economics.spoilage_roi.pouches_to_breakeven} <span className="text-xs font-normal">packs</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Module 2: CPCB EPR Liability & Embodied Carbon LCA Card */}
+      {sustainability && sustainability.embodied_carbon && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Recycle className="w-5 h-5 text-teal-600" />
+              <span>CPCB EPR Liability & Embodied Carbon LCA</span>
+            </h3>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                  style={{ backgroundColor: `${sustainability.circularity_rating?.badge_color}20`, color: sustainability.circularity_rating?.badge_color }}>
+              {sustainability.circularity_rating?.grade} · {sustainability.circularity_rating?.label}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Embodied Carbon Footprint</span>
+              <span className="text-base font-bold text-slate-900 font-mono">
+                {sustainability.embodied_carbon.carbon_per_pouch_g_co2e} <span className="text-xs font-normal text-slate-500">g CO2e / pack</span>
+              </span>
+              <span className="text-[10px] text-slate-400 block">
+                {sustainability.embodied_carbon.carbon_per_10k_pouches_kg_co2e} kg CO2e per 10k pouches
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">CPCB EPR Classification</span>
+              <span className="text-xs font-bold text-slate-900 block truncate" title={sustainability.cpcb_epr_compliance?.category_name}>
+                {sustainability.cpcb_epr_compliance?.category_name}
+              </span>
+              <span className="text-[10px] text-emerald-700 font-semibold block">
+                Fee Rate: ₹{sustainability.cpcb_epr_compliance?.fee_rate_per_ton_inr?.toLocaleString()} / ton
+              </span>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="text-slate-500 font-medium block">Est. Annual EPR Obligation</span>
+              <span className="text-base font-bold text-slate-900 font-mono">
+                {sustainability.cpcb_epr_compliance?.is_exempt ? (
+                  <span className="text-emerald-700 font-bold">₹0 (IS 17088 Exempt)</span>
+                ) : (
+                  <span>₹{sustainability.cpcb_epr_compliance?.estimated_annual_epr_liability_inr?.toLocaleString()} <span className="text-xs font-normal text-slate-400">/ yr</span></span>
+                )}
+              </span>
+              <span className="text-[10px] text-slate-400 block">
+                Based on {sustainability.cpcb_epr_compliance?.assumed_annual_pouches?.toLocaleString()} pouches/yr
+              </span>
+            </div>
+          </div>
+
+          {/* Circularity Guidance */}
+          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs flex items-start gap-2.5">
+            <TreePine className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <span className="font-bold text-slate-800">
+                Circularity Stream: {sustainability.circularity_rating?.recycling_stream}
+              </span>
+              <p className="text-slate-600 text-[11px]">
+                {language === 'hi' ? sustainability.circularity_rating?.guidance_hi : sustainability.circularity_rating?.guidance_en}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Why This Material (Scientific Rationale Card) */}
       <div className="bg-emerald-900 text-white rounded-2xl p-6 shadow-md space-y-2">

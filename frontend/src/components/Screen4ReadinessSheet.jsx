@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Download, Printer, ArrowLeft, CheckCircle, FileCheck, Building, ShieldCheck, Sparkles, RefreshCw } from 'lucide-react';
+import { Download, Printer, ArrowLeft, CheckCircle, FileCheck, Building, ShieldCheck, Sparkles, RefreshCw, QrCode } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
-export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack }) => {
+export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, onOpenPassport }) => {
   const { language, t } = useLanguage();
   const [isExporting, setIsExporting] = useState(false);
 
@@ -68,7 +68,24 @@ export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack }
           <span>{t('back_edit_btn')}</span>
         </button>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          {/* Digital Passport Link */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onOpenPassport) {
+                onOpenPassport('PMFME-2026-CERT');
+              } else {
+                window.open(`/verify?id=${recommendation.commodity_id}&batch=PMFME-2026-CERT`, '_blank');
+              }
+            }}
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm"
+            title="Inspect cryptographic Digital Product Passport"
+          >
+            <QrCode className="w-4 h-4 text-indigo-600" />
+            <span>Digital Passport</span>
+          </button>
+
           {/* Print / Save PDF Fallback */}
           <button
             type="button"

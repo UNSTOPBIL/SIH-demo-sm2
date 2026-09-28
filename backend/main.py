@@ -100,6 +100,83 @@ def get_commodity_compliance(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+from backend.engine.economics_engine import evaluate_converter_economics
+from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
+from backend.engine.audit_engine import audit_packaging_label, SAMPLE_COMPLIANT_LABEL, SAMPLE_NON_COMPLIANT_LABEL
+from backend.engine.passport_engine import get_digital_product_passport
+
+class EconomicsRequest(BaseModel):
+    structure: Dict[str, Any]
+    commodity_name: Optional[str] = "Agri-Commodity"
+    pack_weight_g: Optional[float] = 250.0
+    retail_pack_price_inr: Optional[float] = 200.0
+    batch_pouches: Optional[int] = 4000
+
+class SustainabilityRequest(BaseModel):
+    structure: Dict[str, Any]
+    pouch_area_m2: Optional[float] = 0.045
+    annual_pouches_volume: Optional[int] = 500000
+
+class AuditLabelRequest(BaseModel):
+    raw_text: str
+    metadata: Optional[Dict[str, Any]] = None
+
+@app.post("/api/economics")
+def compute_economics(payload: EconomicsRequest):
+    try:
+        return evaluate_converter_economics(
+            structure=payload.structure,
+            commodity_name=payload.commodity_name or "Agri-Commodity",
+            pack_weight_g=payload.pack_weight_g or 250.0,
+            retail_pack_price_inr=payload.retail_pack_price_inr or 200.0,
+            batch_pouches=payload.batch_pouches or 4000
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/sustainability")
+def compute_sustainability(payload: SustainabilityRequest):
+    try:
+        return calculate_carbon_and_epr_footprint(
+            structure=payload.structure,
+            pouch_area_m2=payload.pouch_area_m2 or 0.045,
+            annual_pouches_volume=payload.annual_pouches_volume or 500000
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/audit-label")
+def audit_label_endpoint(payload: AuditLabelRequest):
+    try:
+        return audit_packaging_label(
+            raw_text=payload.raw_text,
+            metadata=payload.metadata
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/audit-samples")
+def get_audit_samples():
+    return {
+        "compliant_sample": SAMPLE_COMPLIANT_LABEL.strip(),
+        "non_compliant_sample": SAMPLE_NON_COMPLIANT_LABEL.strip()
+    }
+
+@app.get("/api/verify/{batch_id}")
+def verify_digital_passport(
+    batch_id: str,
+    id: Optional[str] = "makhana",
+    laminate_id: Optional[str] = None
+):
+    try:
+        return get_digital_product_passport(
+            batch_id=batch_id,
+            commodity_id=id or "makhana",
+            laminate_id=laminate_id
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/export-pdf")
 def export_readiness_pdf(data: Dict[str, Any]):
     try:

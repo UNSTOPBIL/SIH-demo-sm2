@@ -11,6 +11,8 @@ from backend.engine.physics_engine import (
     generate_shelf_life_decay_curves,
     get_is9845_simulant_matrix
 )
+from backend.engine.economics_engine import evaluate_converter_economics
+from backend.engine.sustainability_engine import calculate_carbon_and_epr_footprint
 
 def load_seed_commodities():
     seed_path = os.path.join(os.path.dirname(__file__), "..", "data", "commodities_seed.json")
@@ -248,6 +250,28 @@ def recommend_packaging(
     # Use solved primary structure name
     primary_mat_name = primary_structure["name"]
     alt_mat_name = alt_structure["name"]
+    # 5. INDUSTRIAL CONVERTER ECONOMICS & CARBON/EPR LCA
+    economics_metrics = evaluate_converter_economics(
+        structure=primary_structure,
+        commodity_name=matched.get("name_en", "Food Commodity"),
+        pack_weight_g=250.0,
+        retail_pack_price_inr=float(matched.get("estimated_retail_mrp", 200.0)) if "estimated_retail_mrp" in matched else 200.0
+    )
+    sustainability_metrics = calculate_carbon_and_epr_footprint(
+        structure=primary_structure,
+        pouch_area_m2=economics_metrics["unit_cost_metrics"]["pouch_area_m2"]
+    )
+
+    alt_economics = evaluate_converter_economics(
+        structure=alt_structure,
+        commodity_name=matched.get("name_en", "Food Commodity"),
+        pack_weight_g=250.0,
+        retail_pack_price_inr=float(matched.get("estimated_retail_mrp", 200.0)) if "estimated_retail_mrp" in matched else 200.0
+    )
+    alt_sustainability = calculate_carbon_and_epr_footprint(
+        structure=alt_structure,
+        pouch_area_m2=alt_economics["unit_cost_metrics"]["pouch_area_m2"]
+    )
 
     return {
         "commodity_id": matched["id"],
@@ -289,10 +313,18 @@ def recommend_packaging(
         },
         "shelf_life_decay": shelf_life_curves,
         "simulant_protocol": simulant_matrix,
+        "economics": economics_metrics,
+        "sustainability": sustainability_metrics,
+        "alt_economics": alt_economics,
+        "alt_sustainability": alt_sustainability,
         "technical_specs": {
             "otr_range": f"{primary_structure['otr']} cc/m²/day (ASTM D3985)",
             "wvtr_range": f"{primary_structure['wvtr']} g/m²/day (ASTM F1249)",
             "thickness_um": primary_structure["total_thickness_um"],
+            "total_gsm": economics_metrics["gsm_metrics"]["total_gsm"],
+            "film_yield_m2_per_kg": economics_metrics["gsm_metrics"]["film_yield_m2_per_kg"],
+            "unit_cost_inr": economics_metrics["unit_cost_metrics"]["cost_per_pouch_inr"],
+            "carbon_footprint_g_co2e": sustainability_metrics["embodied_carbon"]["carbon_per_pouch_g_co2e"],
             "barrier_rating": matched["barrier_rating"],
             "map_suitable": matched["map_suitable"] or otr_data.get("is_produce", False),
             "map_gas_mix": otr_data.get("map_gas_equilibrium", matched["map_gas_mix"]),

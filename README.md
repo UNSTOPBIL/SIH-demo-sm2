@@ -201,16 +201,21 @@ SIH-demo-sm2/
 │   │   └── translations.json       # Static bilingual dictionary (en, hi)
 │   ├── engine/
 │   │   ├── __init__.py
+│   │   ├── audit_engine.py         # Reverse FSSAI & Legal Metrology label artwork auditor
 │   │   ├── compliance.py           # FSSAI, BIS, CPCB-EPR, IS 9845 statutory rule engine
+│   │   ├── economics_engine.py     # Industrial converter economics, GSM, yield & spoilage ROI solver
 │   │   ├── model.joblib            # Trained Scikit-Learn DecisionTree classifier artifact
+│   │   ├── passport_engine.py      # Live Digital Product Passport with SHA-256 seal generator
 │   │   ├── pdf_generator.py        # ReportLab 1-page PMFME Packaging Readiness Certificate generator
 │   │   ├── physics_engine.py       # Tetens vapor pressure, WVTR/OTR kinetics, laminate solver
 │   │   ├── recommender.py          # Hybrid ML inference + barrier constraint scoring logic
+│   │   ├── sustainability_engine.py# CPCB EPR liability, carbon footprint LCA & circularity grading
 │   │   └── train_model.py          # Synthetic dataset generator & Stratified 5-Fold model trainer
 │   ├── main.py                     # FastAPI application endpoints & schema definitions
 │   ├── requirements.txt            # Python production and testing dependencies
 │   ├── stress_test.py              # Automated 6-scenario full-system adversarial stress runner
 │   ├── test_api.py                 # Backend REST API integration test suite
+│   ├── test_modules.py             # Unit test suite for the 4 enterprise engineering modules
 │   └── test_physics.py             # Biophysical formulas and kinetics unit test suite
 ├── documents/
 │   ├── extracted_build_spec.txt    # Extracted technical specifications from MoFPI
@@ -219,19 +224,21 @@ SIH-demo-sm2/
 └── frontend/
     ├── src/
     │   ├── components/
+    │   │   ├── LabelAuditor.jsx           # Reverse FSSAI & Legal Metrology label artwork audit studio
     │   │   ├── LabelMockupPreview.jsx     # FSSAI 2020 SVG Pouch label preview
     │   │   ├── LaminateVisualizer.jsx     # 2.5D interactive multi-layer laminate stack visualizer
     │   │   ├── Screen1Input.jsx           # Commodity selector, custom mode & environmental sliders
-    │   │   ├── Screen2Recommendation.jsx  # AI recommendation, advisory alert & barrier ratings
+    │   │   ├── Screen2Recommendation.jsx  # AI recommendation, economics & sustainability cards
     │   │   ├── Screen3Compliance.jsx      # FSSAI, BIS, EPR & IS 9845 compliance studio
     │   │   ├── Screen4ReadinessSheet.jsx  # PMFME 1-page certificate view & PDF downloader
     │   │   ├── ShelfLifeSimulator.jsx     # Biophysical Arrhenius & RH quality decay SVG simulator
-    │   │   └── SimulantProtocolCard.jsx   # IS 9845 food simulant test card component
+    │   │   ├── SimulantProtocolCard.jsx   # IS 9845 food simulant test card component
+    │   │   └── VerifyPassport.jsx         # Live Digital Product Passport (/verify) with cryptographic seal
     │   ├── context/
     │   │   └── LanguageContext.jsx        # Bilingual (English & Hindi) state provider
     │   ├── hooks/
     │   │   └── useVoiceInput.js           # Web Speech API speech-to-text hook
-    │   ├── App.jsx                        # 4-stage navigation workflow coordinator
+    │   ├── App.jsx                        # 4-stage navigation workflow coordinator & view router
     │   ├── index.css                      # Tailwind styling & print media rules
     │   └── main.jsx                       # React 18 DOM root entrypoint
     ├── index.html                         # HTML5 template with Devanagari typography
@@ -241,6 +248,41 @@ SIH-demo-sm2/
     ├── tailwind.config.js                 # Custom color palettes & typography tokens
     └── vite.config.js                     # Vite build configuration with proxy to FastAPI
 ```
+
+---
+
+## 💼 Enterprise Engineering & Compliance Modules
+
+PackAI India extends far beyond simple material recommendations by integrating four production-grade industrial modules:
+
+### 1. 🏭 Industrial Converter Economics & GSM Solver (`backend/engine/economics_engine.py`)
+- **Composite GSM & Yield**: Accurate density-driven mass calculation ($\text{GSM} = \sum t_i \cdot \rho_i + \text{adhesive}$) across polymers (BOPP, PET, MET-PET, LDPE, HDPE, Al-Foil, EVOH, PLA, Paper) and standard film yield ($m^2/\text{kg} = 1000 / \text{GSM}$).
+- **Pouch Unit Costing**: Computes exact raw material cost plus conversion margin (₹35/kg gravure printing & pouching), reporting unit cost (₹/pouch), cost per 1,000 pouches, and packaging cost % against retail price.
+- **Spoilage vs. Packaging ROI Solver**: Quantifies inventory value protected vs. unlaminated packaging, proving that upgrading to high-barrier laminates delivers a **$300\%\text{--}800\%$ net financial return** by eliminating humidity sogginess and rancidity.
+
+### 2. 🌍 CPCB EPR Financial Liability & Carbon LCA Engine (`backend/engine/sustainability_engine.py`)
+- **Embodied Carbon LCA**: Cradle-to-gate carbon footprint intensity calculations ($g\ \text{CO}_2\text{e} / \text{pouch}$ and $\text{kg}\ \text{CO}_2\text{e} / 10\text{k pouches}$) using peer-reviewed Ecoinvent/PlasticsEurope emission factors.
+- **CPCB EPR Schedule II Compliance**: Automatic classification into **Category I (Rigid)**, **Category II (Flexible Mono-material)**, **Category III (Multi-layered Plastic / MLP)**, and **Category IV (Compostable IS 17088)**.
+- **Annual Financial Liability**: Calculates brand owner fee obligations (₹/MT and ₹/year) and assigns an actionable **Circularity Grade (A+ to C)** with regulatory guidance.
+
+### 3. 🛡️ Live Digital Product Passport (`/verify` route & `backend/engine/passport_engine.py`)
+- **Cryptographic SHA-256 Integrity Seal**: Tamper-proof batch verification seal computed from batch ID, commodity ID, laminate structure, and regulatory parameters.
+- **Statutory Registry Record**: Displays verified BIS standards, IS 9845 overall migration limit ($\le 60\ \text{mg/kg}$), NABL ISO/IEC 17025 conformity, and 1-year certificate validity.
+- **Mobile-Responsive Portal**: Accessible via QR codes on physical pouches or certificates, allowing food safety inspectors and consumers to verify packaging authenticity in real time.
+
+### 4. 🔍 Reverse FSSAI Label Compliance Artwork Auditor (`/audit` route & `backend/engine/audit_engine.py`)
+- **10 Statutory Checks**: Reverse audits draft pouch text against FSSAI (Labelling & Display) Regulations 2020 and Legal Metrology (Packaged Commodities) Rules 2011:
+  1. 14-Digit FSSAI License with state/central prefix validation
+  2. Mandatory Veg / Non-Veg emblem declaration
+  3. Net Quantity with statutory unit spacing
+  4. Unit Sale Price (USP per g / kg / ml mandatory since Dec 2022)
+  5. Maximum Retail Price (MRP) with mandatory "(incl. of all taxes)"
+  6. Date of Packaging / Manufacturing
+  7. Best Before / Expiry declaration
+  8. Batch / Lot identification number
+  9. Ingredients List & Allergen Advisory warning
+  10. Mandatory Nutritional Information Table (Energy, Protein, Carbs, Sugars, Fat, Sodium)
+- **Scoring & Penalties**: Computes compliance score (0–100%), overall verdict, and specific legal citations with actionable remedial text for converters and MSMEs.
 
 ---
 
