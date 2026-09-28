@@ -58,11 +58,11 @@ export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Action Toolbar (Hidden during print) */}
-      <div className="no-print bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="no-print bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
         <button
           type="button"
           onClick={onBack}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold text-xs flex items-center justify-center gap-2 transition"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold text-xs flex items-center justify-center gap-2 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t('back_edit_btn')}</span>
@@ -79,10 +79,10 @@ export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, 
                 window.open(`/verify?id=${recommendation.commodity_id}&batch=PMFME-2026-CERT`, '_blank');
               }
             }}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-indigo-300 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-800 dark:text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm"
             title="Inspect cryptographic Digital Product Passport"
           >
-            <QrCode className="w-4 h-4 text-indigo-600" />
+            <QrCode className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             <span>Digital Passport</span>
           </button>
 
@@ -90,9 +90,9 @@ export const Screen4ReadinessSheet = ({ recommendation, complianceData, onBack, 
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm"
+            className="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 transition shadow-sm"
           >
-            <Printer className="w-4 h-4 text-slate-600" />
+            <Printer className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             <span>{t('print_sheet_btn')}</span>
           </button>
 

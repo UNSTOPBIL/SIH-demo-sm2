@@ -109,42 +109,42 @@ export const ShelfLifeSimulator = ({ shelfLifeDecay, physicsMetrics, targetShelf
   }, [hoveredDay, simulatedCurves, targetShelfLifeDays]);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">
-            <Activity className="w-4 h-4 text-emerald-600" />
+          <div className="flex items-center gap-2 text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-1">
+            <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Biophysical Shelf-Life & Kinetic Decay Simulator</span>
           </div>
-          <h3 className="text-xl font-bold text-slate-900">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">
             Dynamic Food Quality Degradation (0–365 Days)
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Arrhenius temperature kinetics + Fickian barrier permeation modeling. Move sliders below to simulate ambient extremes.
           </p>
         </div>
 
         {/* Status Badge */}
-        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-xl self-start sm:self-auto">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3.5 py-1.5 rounded-xl self-start sm:self-auto">
+          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
           <div className="text-xs">
-            <span className="text-slate-500 block text-[10px]">Predicted Shelf-Life</span>
-            <span className="font-bold text-emerald-800 text-sm">{failureDays.recommended} Days</span>
+            <span className="text-slate-500 dark:text-slate-400 block text-[10px]">Predicted Shelf-Life</span>
+            <span className="font-bold text-emerald-800 dark:text-emerald-300 text-sm">{failureDays.recommended} Days</span>
           </div>
         </div>
       </div>
 
       {/* Interactive Environmental Sliders */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800/70 p-4 rounded-xl border border-slate-200 dark:border-slate-700">
         {/* Temperature Slider */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+            <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <Thermometer className="w-3.5 h-3.5 text-rose-500" />
               Storage Temperature:
             </span>
-            <span className="font-bold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded font-mono">
+            <span className="font-bold text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded font-mono">
               {tempC}°C ({tempC < 15 ? 'Cold Chain' : tempC <= 30 ? 'Ambient Room' : 'Tropical Extreme'})
             </span>
           </div>
@@ -155,7 +155,7 @@ export const ShelfLifeSimulator = ({ shelfLifeDecay, physicsMetrics, targetShelf
             step="1"
             value={tempC}
             onChange={(e) => setTempC(parseInt(e.target.value))}
-            className="w-full accent-rose-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg appearance-none"
+            className="w-full accent-rose-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
           />
           <div className="flex justify-between text-[10px] text-slate-400">
             <span>4°C (Refrigerated)</span>
@@ -167,11 +167,11 @@ export const ShelfLifeSimulator = ({ shelfLifeDecay, physicsMetrics, targetShelf
         {/* Ambient Humidity Slider */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700 flex items-center gap-1.5">
+            <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <Droplets className="w-3.5 h-3.5 text-blue-500" />
               Ambient Relative Humidity (RH):
             </span>
-            <span className="font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-mono">
+            <span className="font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded font-mono">
               {rhPct}% RH ({rhPct < 45 ? 'Dry' : rhPct <= 75 ? 'Humid' : 'Monsoon Coastal'})
             </span>
           </div>
@@ -182,7 +182,7 @@ export const ShelfLifeSimulator = ({ shelfLifeDecay, physicsMetrics, targetShelf
             step="1"
             value={rhPct}
             onChange={(e) => setRhPct(parseInt(e.target.value))}
-            className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg appearance-none"
+            className="w-full accent-blue-600 cursor-pointer h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none"
           />
           <div className="flex justify-between text-[10px] text-slate-400">
             <span>20% (Arid Rajasthan)</span>
@@ -402,43 +402,43 @@ export const ShelfLifeSimulator = ({ shelfLifeDecay, physicsMetrics, targetShelf
       {/* Degradation Metrics & Shelf-Life Comparison Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Metric 1: Control Half-Life */}
-        <div className="p-4 bg-rose-50/70 border border-rose-200 rounded-xl space-y-1">
-          <span className="text-xs font-semibold text-rose-800 flex items-center gap-1.5">
-            <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+        <div className="p-4 bg-rose-50/70 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/50 rounded-xl space-y-1">
+          <span className="text-xs font-semibold text-rose-800 dark:text-rose-300 flex items-center gap-1.5">
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             Unpackaged Control
           </span>
-          <div className="text-2xl font-bold text-rose-900">
+          <div className="text-2xl font-bold text-rose-900 dark:text-rose-200">
             {failureDays.control} {typeof failureDays.control === 'number' ? 'Days' : ''}
           </div>
-          <p className="text-[11px] text-rose-700 leading-tight">
+          <p className="text-[11px] text-rose-700 dark:text-rose-300/80 leading-tight">
             Rapid quality degradation due to immediate ambient moisture/O2 ingress.
           </p>
         </div>
 
         {/* Metric 2: Monolayer Plastic */}
-        <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1">
-          <span className="text-xs font-semibold text-amber-800 flex items-center gap-1.5">
-            <TrendingDown className="w-3.5 h-3.5 text-amber-600" />
+        <div className="p-4 bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-xl space-y-1">
+          <span className="text-xs font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+            <TrendingDown className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             Generic Single-Layer
           </span>
-          <div className="text-2xl font-bold text-amber-900">
+          <div className="text-2xl font-bold text-amber-900 dark:text-amber-200">
             {failureDays.generic} {typeof failureDays.generic === 'number' ? 'Days' : ''}
           </div>
-          <p className="text-[11px] text-amber-700 leading-tight">
+          <p className="text-[11px] text-amber-700 dark:text-amber-300/80 leading-tight">
             Moderate moisture barrier but permeable to oxygen, triggering lipid rancidity.
           </p>
         </div>
 
         {/* Metric 3: Multi-Layer Barrier Solution */}
-        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1">
-          <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/70 rounded-xl space-y-1">
+          <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             Recommended Barrier Film
           </span>
-          <div className="text-2xl font-bold text-emerald-900">
+          <div className="text-2xl font-bold text-emerald-900 dark:text-emerald-200">
             {failureDays.recommended} {typeof failureDays.recommended === 'number' ? 'Days' : ''}
           </div>
-          <p className="text-[11px] text-emerald-700 leading-tight">
+          <p className="text-[11px] text-emerald-700 dark:text-emerald-300/80 leading-tight">
             Engineered metallized/EVOH barrier maintains sensory quality & nutrition.
           </p>
         </div>

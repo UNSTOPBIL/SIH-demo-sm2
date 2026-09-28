@@ -130,7 +130,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-800 to-green-900 rounded-2xl p-6 text-white shadow-lg">
+      <div className="bg-emerald-900 bg-gradient-to-r from-emerald-800 to-green-900 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-700/60 rounded-full text-xs font-semibold text-emerald-200 mb-2">
@@ -155,16 +155,16 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
       </div>
 
       {/* Main Selection Form */}
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm space-y-6">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 md:p-8 shadow-sm space-y-6 transition-colors duration-200">
         {/* Mode Toggle: Seeded ODOP vs Custom Unlisted */}
-        <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl max-w-md">
+        <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-800/90 rounded-xl max-w-md border border-slate-200 dark:border-slate-700">
           <button
             type="button"
             onClick={() => setIsCustomMode(false)}
             className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
               !isCustomMode
-                ? 'bg-white text-emerald-800 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-300 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <ListFilter className="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             className={`flex-1 py-2 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
               isCustomMode
                 ? 'bg-emerald-700 text-white shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <PlusCircle className="w-3.5 h-3.5" />
@@ -187,8 +187,8 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
         {!isCustomMode ? (
           /* Dropdown & Voice Recognition Bar for Seeded Crops */
           <div>
-            <label className="block text-sm font-semibold text-slate-800 mb-2">
-              {t('select_commodity')} <span className="text-emerald-600 font-normal">({commodities.length} Seeded ODOP Crops)</span>
+            <label className="block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-2">
+              {t('select_commodity')} <span className="text-emerald-600 dark:text-emerald-400 font-normal">({commodities.length} Seeded ODOP Crops)</span>
             </label>
             <div className="flex items-center gap-3">
               <div className="relative flex-1">
@@ -198,11 +198,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                     const found = commodities.find(c => c.id === e.target.value);
                     if (found) onSelectCommodity(found);
                   }}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-slate-800 font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
                 >
-                  <option value="" disabled>{t('select_placeholder')}</option>
+                  <option value="" disabled className="bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400">{t('select_placeholder')}</option>
                   {commodities.map((item) => (
-                    <option key={item.id} value={item.id}>
+                    <option key={item.id} value={item.id} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">
                       {language === 'hi' ? item.name_hi : item.name_en} — {item.odop_region}
                     </option>
                   ))}
@@ -216,8 +216,8 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 title={t('voice_search_tooltip')}
                 className={`p-3.5 rounded-xl border transition flex items-center justify-center ${
                   isListening
-                    ? 'bg-red-500 text-white border-red-600 animate-pulse ring-4 ring-red-200'
-                    : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300'
+                    ? 'bg-red-500 text-white border-red-600 animate-pulse ring-4 ring-red-200 dark:ring-red-950'
+                    : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
                 }`}
               >
                 {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -226,46 +226,46 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
 
             {/* Voice Notification / Spoken Text */}
             {voiceNotice && (
-              <div className="mt-2 flex items-center gap-2 text-xs font-medium text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
-                <Volume2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div className="mt-2 flex items-center gap-2 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <span>{voiceNotice}</span>
               </div>
             )}
             {!isSupported && (
-              <p className="mt-1 text-xs text-amber-600">{t('speech_unsupported')}</p>
+              <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">{t('speech_unsupported')}</p>
             )}
 
             {/* Selected Commodity Info Badges */}
             {selectedCommodity && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-sm mt-4">
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <div>
-                    <span className="text-xs text-slate-500 block">{t('odop_cluster')}</span>
-                    <span className="font-semibold text-slate-800">{selectedCommodity.odop_region}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 block">{t('odop_cluster')}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedCommodity.odop_region}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Tag className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <Tag className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <div>
-                    <span className="text-xs text-slate-500 block">{t('category')}</span>
-                    <span className="font-semibold text-slate-800">{selectedCommodity.category}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 block">{t('category')}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedCommodity.category}</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
         ) : (
-          /* Custom Commodity Input Panel */
-          <div className="space-y-4 p-5 bg-emerald-50/50 rounded-xl border border-emerald-200">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 uppercase tracking-wide">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
+          <div className="space-y-4 p-5 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800">
+            {/* Custom Commodity Input Panel */}
+            <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
+              <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Custom Agro-Commodity Specification (AI Heuristic & Barrier Synthesis)</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Commodity / Crop Name *
                 </label>
                 <input
@@ -273,13 +273,13 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                   placeholder="e.g., Red Dragonfruit, Moringa Energy Bar, Aonla Murabba"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   ODOP Cluster / Enterprise District
                 </label>
                 <input
@@ -287,42 +287,42 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                   placeholder="e.g., Kutch (Gujarat), Wayanad (Kerala)"
                   value={customRegion}
                   onChange={(e) => setCustomRegion(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Commodity Food Category
                 </label>
                 <select
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                 >
-                  <option value="Dry Food / Snack">Dry Food / Snack / Savouries</option>
-                  <option value="Fresh Produce">Fresh Produce (Fruits / Vegetables / Mushrooms)</option>
-                  <option value="Liquid / Pickle">Pickle, Chutney, Sauce, or Preserves</option>
-                  <option value="Dairy / Fat">Dairy / High-Fat Oil / Ghee</option>
-                  <option value="Spices / Powder">Spices / Seasonings / Powders</option>
-                  <option value="Cereals / Grains">Cereals / Grains / Pulses</option>
+                  <option value="Dry Food / Snack" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Dry Food / Snack / Savouries</option>
+                  <option value="Fresh Produce" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Fresh Produce (Fruits / Vegetables / Mushrooms)</option>
+                  <option value="Liquid / Pickle" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Pickle, Chutney, Sauce, or Preserves</option>
+                  <option value="Dairy / Fat" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Dairy / High-Fat Oil / Ghee</option>
+                  <option value="Spices / Powder" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Spices / Seasonings / Powders</option>
+                  <option value="Cereals / Grains" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Cereals / Grains / Pulses</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Respiration & Perishability Profile
                 </label>
                 <select
                   value={customRespiration}
                   onChange={(e) => setCustomRespiration(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                 >
-                  <option value="Very Low">Very Low / Inert (Dried snacks, powders, oils)</option>
-                  <option value="Low">Low (Apples, citrus, onions, potatoes)</option>
-                  <option value="Moderate">Moderate (Carrots, cabbage, tomatoes)</option>
-                  <option value="High">High (Berries, leafy greens, avocados)</option>
-                  <option value="Extremely High">Extremely High (Mushrooms, sweet corn, cut produce)</option>
+                  <option value="Very Low" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Very Low / Inert (Dried snacks, powders, oils)</option>
+                  <option value="Low" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Low (Apples, citrus, onions, potatoes)</option>
+                  <option value="Moderate" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Moderate (Carrots, cabbage, tomatoes)</option>
+                  <option value="High" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">High (Berries, leafy greens, avocados)</option>
+                  <option value="Extremely High" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100">Extremely High (Mushrooms, sweet corn, cut produce)</option>
                 </select>
               </div>
             </div>
@@ -330,16 +330,16 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
         )}
 
         {/* Customization Sliders Section */}
-        <div className="pt-2 border-t border-slate-100 space-y-5">
+        <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-              <Sliders className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
+              <Sliders className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>{t('customize_parameters')}</span>
             </div>
             <button
               type="button"
               onClick={handleResetDefaults}
-              className="text-xs text-slate-500 hover:text-emerald-700 flex items-center gap-1 font-medium transition"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center gap-1 font-medium transition"
             >
               <RefreshCw className="w-3 h-3" />
               Reset ODOP Defaults
@@ -348,10 +348,10 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Slider 1: Moisture */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">{t('moisture_label')}</span>
-                <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('moisture_label')}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
                   {moisture}%
                 </span>
               </div>
@@ -364,17 +364,17 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setMoisture(parseFloat(e.target.value))}
                 className="w-full accent-emerald-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>0.1% (Dry powder)</span>
                 <span>95% (Fresh fruit/vegetable)</span>
               </div>
             </div>
 
             {/* Slider 2: Fat / Oil */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">{t('fat_label')}</span>
-                <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('fat_label')}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
                   {fat}%
                 </span>
               </div>
@@ -387,17 +387,17 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setFat(parseFloat(e.target.value))}
                 className="w-full accent-emerald-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>0% (Oil-free)</span>
                 <span>99.9% (Pure Ghee/Fat)</span>
               </div>
             </div>
 
             {/* Slider 3: pH Level */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">{t('ph_label')}</span>
-                <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('ph_label')}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
                   pH {ph}
                 </span>
               </div>
@@ -410,17 +410,17 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setPh(parseFloat(e.target.value))}
                 className="w-full accent-emerald-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>pH 2.0 (Acidic Pickle)</span>
                 <span>pH 7.0+ (Neutral)</span>
               </div>
             </div>
 
             {/* Slider 4: Shelf Life */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">{t('shelf_life_label')}</span>
-                <span className="font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">{t('shelf_life_label')}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
                   {shelfLife} {t('days')}
                 </span>
               </div>
@@ -433,17 +433,17 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setShelfLife(parseInt(e.target.value))}
                 className="w-full accent-emerald-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>7 days (Chilled)</span>
                 <span>730 days (2 Years)</span>
               </div>
             </div>
 
             {/* Slider 5: Storage Temperature */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">Storage Temperature (°C)</span>
-                <span className="font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">Storage Temperature (°C)</span>
+                <span className="font-bold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded">
                   {tempC}°C
                 </span>
               </div>
@@ -456,7 +456,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setTempC(parseFloat(e.target.value))}
                 className="w-full accent-rose-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>4°C (Cold Chain)</span>
                 <span>27°C (Standard)</span>
                 <span>45°C (Extreme)</span>
@@ -464,10 +464,10 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             </div>
 
             {/* Slider 6: Ambient Humidity */}
-            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-medium text-slate-700">Ambient Relative Humidity (% RH)</span>
-                <span className="font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+                <span className="font-medium text-slate-700 dark:text-slate-300">Ambient Relative Humidity (% RH)</span>
+                <span className="font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded">
                   {ambientRh}% RH
                 </span>
               </div>
@@ -480,7 +480,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 onChange={(e) => setAmbientRh(parseFloat(e.target.value))}
                 className="w-full accent-blue-600 cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-slate-400">
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>20% (Arid Zone)</span>
                 <span>65% (IS Standard)</span>
                 <span>95% (Monsoon Coastal)</span>
@@ -489,8 +489,8 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
           </div>
 
           {/* Storage Conditions Radios */}
-          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-            <span className="block text-xs font-semibold text-slate-700 mb-1">
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+            <span className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               {t('storage_condition')}
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
@@ -503,8 +503,8 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                   key={opt.id}
                   className={`flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition ${
                     storageType === opt.id
-                      ? 'bg-emerald-100/70 border-emerald-500 font-semibold text-emerald-900'
-                      : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
+                      ? 'bg-emerald-100/70 dark:bg-emerald-950/80 border-emerald-500 dark:border-emerald-600 font-semibold text-emerald-900 dark:text-emerald-300'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
                   <input
@@ -527,7 +527,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
           <button
             type="submit"
             disabled={isCustomMode ? (!customName.trim() || isAnalyzing) : (!selectedCommodity || isAnalyzing)}
-            className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-300 text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition duration-200 text-base"
+            className="w-full bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-300 dark:disabled:bg-slate-800 disabled:text-slate-500 dark:disabled:text-slate-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-md hover:shadow-lg flex items-center justify-center gap-2 transition duration-200 text-base"
           >
             {isAnalyzing ? (
               <>

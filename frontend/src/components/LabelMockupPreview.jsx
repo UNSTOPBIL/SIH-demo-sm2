@@ -22,25 +22,25 @@ export const LabelMockupPreview = ({ commodity, primaryMaterial, complianceData 
   const estCalories = Math.round(parseFloat(estProtein) * 4 + parseFloat(estCarb) * 4 + parseFloat(estFat) * 9);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-indigo-700 uppercase tracking-wider mb-1">
-            <Sparkles className="w-4 h-4 text-indigo-600" />
+          <div className="flex items-center gap-2 text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-1">
+            <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
             <span>FSSAI (Labelling & Display) Regulations 2020 Compliant</span>
           </div>
-          <h3 className="text-xl font-bold text-slate-900">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white">
             Interactive FMCG Back-of-Pack Label Studio
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Photorealistic rendering of mandatory statutory declarations, nutrition tables, and CPCB EPR barcodes.
           </p>
         </div>
 
         {/* Pack Size Switcher */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-500 font-medium">SKU Size:</span>
+          <span className="text-slate-500 dark:text-slate-400 font-medium">SKU Size:</span>
           {['100 g', '250 g', '500 g', '1 kg'].map(sz => (
             <button
               key={sz}
@@ -55,7 +55,7 @@ export const LabelMockupPreview = ({ commodity, primaryMaterial, complianceData 
               className={`px-2.5 py-1 rounded-lg border font-semibold transition ${
                 packSize === sz
                   ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                  : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300'
+                  : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300'
               }`}
             >
               {sz}
@@ -65,7 +65,7 @@ export const LabelMockupPreview = ({ commodity, primaryMaterial, complianceData 
       </div>
 
       {/* Photorealistic Back-of-Pack Mockup Container */}
-      <div className="max-w-2xl mx-auto bg-amber-50/20 border-2 border-slate-300 rounded-3xl p-6 md:p-8 shadow-md relative font-sans text-slate-900 space-y-5">
+      <div className="max-w-2xl mx-auto bg-white dark:bg-slate-50 border-2 border-slate-300 dark:border-slate-700 rounded-3xl p-6 md:p-8 shadow-md relative font-sans text-slate-900 space-y-5">
         {/* Top Bar: Brand, Crop Title & FSSAI Veg Symbol */}
         <div className="flex items-start justify-between border-b-2 border-slate-900 pb-3">
           <div>

@@ -86,7 +86,7 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
   return (
     <div className="max-w-4xl mx-auto space-y-6 my-4 px-3 sm:px-0">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-emerald-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg">
+      <div className="bg-slate-900 bg-gradient-to-r from-emerald-800 to-slate-900 rounded-2xl p-6 text-white shadow-lg">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-700/60 rounded-full text-xs font-semibold text-emerald-200 mb-2">
@@ -105,34 +105,34 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
           {onBack && (
             <button
               onClick={onBack}
-              className="px-3.5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-xs font-bold transition self-start sm:self-auto shrink-0"
+              className="px-3.5 py-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 rounded-xl text-xs font-bold text-white transition self-start sm:self-auto shrink-0 flex items-center gap-1.5 shadow-sm"
             >
-              Back to Dashboard
+              <span>Back to Dashboard</span>
             </button>
           )}
         </div>
       </div>
 
       {/* Main Studio Area */}
-      <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-5">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-5">
         {/* Sample Load Buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+            <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Test Label Artwork Text</span>
           </span>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => loadSample('compliant')}
-              className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-semibold transition"
+              className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-lg text-xs font-semibold transition"
             >
               Load Compliant Sample (100%)
             </button>
             <button
               type="button"
               onClick={() => loadSample('non_compliant')}
-              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 rounded-lg text-xs font-semibold transition"
+              className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800 rounded-lg text-xs font-semibold transition"
             >
               Load Defective Sample (0%)
             </button>
@@ -141,7 +141,7 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
 
         {/* Text Input Area */}
         <div className="space-y-2">
-          <label className="block text-xs font-semibold text-slate-700">
+          <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
             Paste Packaging Artwork Copy / Label Declaration Text:
           </label>
           <textarea
@@ -149,20 +149,20 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
             value={labelText}
             onChange={(e) => setLabelText(e.target.value)}
             placeholder="Paste text printed on front or back panel (e.g., FSSAI Lic No, MRP, Net Qty, Unit Sale Price, Ingredients, Nutritional Information, Dates, Veg logo, Address)..."
-            className="w-full p-4 rounded-xl border border-slate-300 bg-slate-50 font-mono text-xs text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none transition"
+            className="w-full p-4 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-mono text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-slate-800 outline-none transition"
           />
         </div>
 
         {/* Action Button */}
         <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             Checks 10 mandatory statutory rules under FSSAI 2020 & Legal Metrology.
           </span>
           <button
             type="button"
             onClick={() => handleRunAudit()}
             disabled={!labelText.trim() || isAuditing}
-            className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-300 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center gap-2"
+            className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center gap-2"
           >
             {isAuditing ? (
               <>
@@ -181,24 +181,32 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
 
       {/* Audit Results View */}
       {auditResult && (
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
           {/* Top Score Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border"
-               style={{ backgroundColor: `${auditResult.verdict_color}10`, borderColor: `${auditResult.verdict_color}40` }}>
+          <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl border ${
+            auditResult.verdict === 'COMPLIANT'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800'
+              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800'
+          }`}>
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl flex flex-col items-center justify-center font-black shadow-inner"
-                   style={{ backgroundColor: auditResult.verdict_color, color: '#ffffff' }}>
+              <div className={`w-16 h-16 rounded-2xl flex flex-col items-center justify-center font-black shadow-inner text-white ${
+                auditResult.verdict === 'COMPLIANT' ? 'bg-emerald-600' : 'bg-rose-600'
+              }`}>
                 <span className="text-2xl leading-none">{auditResult.score}</span>
                 <span className="text-[9px] uppercase tracking-wider font-bold">/ 100</span>
               </div>
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider block" style={{ color: auditResult.verdict_color }}>
+                <span className={`text-xs font-bold uppercase tracking-wider block ${
+                  auditResult.verdict === 'COMPLIANT'
+                    ? 'text-emerald-800 dark:text-emerald-300'
+                    : 'text-rose-800 dark:text-rose-300'
+                }`}>
                   Statutory Audit Verdict: {auditResult.verdict}
                 </span>
-                <h3 className="text-base font-bold text-slate-900 mt-0.5">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
                   {auditResult.summary}
                 </h3>
-                <span className="text-xs text-slate-500 mt-1 block">
+                <span className="text-xs text-slate-600 dark:text-slate-300 mt-1 block">
                   Passed {auditResult.passed_count} of {auditResult.total_checks} mandatory statutory checkpoints ({auditResult.failed_count} violations detected).
                 </span>
               </div>
@@ -206,35 +214,35 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
 
             <button
               onClick={handleCopyReport}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-2xs self-start sm:self-auto shrink-0 transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 shadow-2xs self-start sm:self-auto shrink-0 transition"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? "Copied Report" : "Copy Audit Report"}</span>
             </button>
           </div>
 
           {/* Tab Navigation: Violations vs Passed */}
-          <div className="flex items-center gap-3 border-b border-slate-200">
+          <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800">
             <button
               onClick={() => setActiveTab('violations')}
               className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition ${
                 activeTab === 'violations'
-                  ? 'border-rose-600 text-rose-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-rose-600 text-rose-700 dark:text-rose-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
               }`}
             >
-              <XCircle className="w-4 h-4 text-rose-600" />
+              <XCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
               <span>Statutory Violations & Remedies ({auditResult.failed_count})</span>
             </button>
             <button
               onClick={() => setActiveTab('passed')}
               className={`pb-3 text-xs font-bold flex items-center gap-2 border-b-2 transition ${
                 activeTab === 'passed'
-                  ? 'border-emerald-600 text-emerald-700'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-emerald-600 text-emerald-700 dark:text-emerald-400'
+                  : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
               }`}
             >
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Verified Compliant Clauses ({auditResult.passed_count})</span>
             </button>
           </div>
@@ -242,38 +250,38 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
           {/* Active Tab Content */}
           {activeTab === 'violations' ? (
             auditResult.violations.length === 0 ? (
-              <div className="p-8 text-center bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-800 space-y-2">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+              <div className="p-8 text-center bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 space-y-2">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
                 <h4 className="text-base font-bold">Zero Statutory Violations Detected!</h4>
-                <p className="text-xs text-emerald-700 max-w-md mx-auto">
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 max-w-md mx-auto">
                   All mandatory FSSAI 2020 labelling clauses and Legal Metrology Packaged Commodities provisions are fully compliant.
                 </p>
               </div>
             ) : (
               <div className="space-y-3">
                 {auditResult.violations.map((v, i) => (
-                  <div key={i} className="p-4 bg-rose-50/50 rounded-2xl border border-rose-200 space-y-2">
+                  <div key={i} className="p-4 bg-rose-50/50 dark:bg-rose-950/20 rounded-2xl border border-rose-200 dark:border-rose-900/50 space-y-2">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                       <div className="flex items-center gap-2">
                         <span className="w-5 h-5 rounded-full bg-rose-600 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
                           {i + 1}
                         </span>
-                        <h4 className="text-xs font-bold text-slate-900">{v.name}</h4>
-                        <span className="text-[10px] bg-rose-200 text-rose-900 font-semibold px-2 py-0.5 rounded">
+                        <h4 className="text-xs font-bold text-slate-900 dark:text-white">{v.name}</h4>
+                        <span className="text-[10px] bg-rose-200 dark:bg-rose-900/60 text-rose-900 dark:text-rose-200 font-semibold px-2 py-0.5 rounded">
                           {v.category}
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono text-rose-700 font-medium">
+                      <span className="text-[10px] font-mono text-rose-700 dark:text-rose-400 font-medium">
                         {v.citation}
                       </span>
                     </div>
 
                     <div className="pl-7 space-y-1 text-xs">
-                      <p className="text-slate-600">
-                        <strong className="text-slate-700">Found Value:</strong> {v.found_value}
+                      <p className="text-slate-600 dark:text-slate-300">
+                        <strong className="text-slate-700 dark:text-slate-200">Found Value:</strong> {v.found_value}
                       </p>
-                      <div className="p-2.5 bg-white rounded-xl border border-rose-200 text-rose-900 font-medium text-[11px] flex items-start gap-2">
-                        <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                      <div className="p-2.5 bg-white dark:bg-slate-800 rounded-xl border border-rose-200 dark:border-rose-900/60 text-rose-900 dark:text-rose-200 font-medium text-[11px] flex items-start gap-2">
+                        <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                         <div>
                           <strong>Actionable Legal Remedy:</strong> {v.remedy}
                         </div>
@@ -286,17 +294,17 @@ ${auditResult.passed_rules.map((p, i) => `${i + 1}. ${p.name}: ${p.found_value}`
           ) : (
             <div className="space-y-2.5">
               {auditResult.passed_rules.map((p, i) => (
-                <div key={i} className="p-3.5 bg-emerald-50/40 rounded-xl border border-emerald-200 flex items-start justify-between gap-3 text-xs">
+                <div key={i} className="p-3.5 bg-emerald-50/40 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800/60 flex items-start justify-between gap-3 text-xs">
                   <div className="flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-bold text-slate-900">{p.name}</h4>
-                      <span className="text-emerald-800 font-medium text-[11px] block mt-0.5">
+                      <h4 className="font-bold text-slate-900 dark:text-white">{p.name}</h4>
+                      <span className="text-emerald-800 dark:text-emerald-300 font-medium text-[11px] block mt-0.5">
                         {p.found_value}
                       </span>
                     </div>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500 shrink-0">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 shrink-0">
                     {p.citation}
                   </span>
                 </div>
