@@ -20,7 +20,7 @@ In India's agro-food processing sector, micro-enterprises, Farmer Producer Organ
 2. **Regulatory Non-Compliance:** Ignorance of mandatory statutory standards under the **Food Safety and Standards Authority of India (FSSAI)**, **Bureau of Indian Standards (BIS)**, and **Central Pollution Control Board (CPCB) Extended Producer Responsibility (EPR)**.
 3. **Lack of Affordable Technical Tools:** Commercial packaging testing labs charge substantial consulting fees inaccessible to rural micro-processors.
 
-**PackAI India** solves this bottleneck with an **offline-first, biophysically deterministic, AI-guided packaging recommendation engine and statutory compliance studio**. It converts physical food characteristics ($\text{moisture } M_0$, $\text{fat/oil } F$, $\text{pH}$, target shelf-life $\theta$, and ambient climate $T$, $\text{RH}$) into optimal multi-layer barrier laminates, FSSAI legal schedules, IS 9845 chemical simulant protocols, and 1-page statutory packaging readiness certificates.
+**PackAI India** solves this bottleneck with an **offline-first, biophysically deterministic, AI-guided packaging recommendation engine and statutory compliance studio**. It converts physical food characteristics ($\text{moisture } M_0$, $\text{fat/oil } F$, $\text{pH}$, target shelf-life $\theta$, and ambient climate $T$, $\text{RH}$) into optimal multi-layer barrier laminates, industrial converter economics, CPCB EPR obligations, reverse FSSAI artwork audits, cryptographic digital product passports, and 1-page statutory packaging readiness certificates.
 
 ---
 
@@ -42,31 +42,41 @@ graph TD
         VoiceInput["Web Speech Recognition (Bilingual hi-IN & en-IN)"]:::client
         CropSelector["18 Seeded ODOP Crops OR Custom Crop Studio"]:::client
         ParamSliders["Environmental Controls (Temp: 4-45°C, RH: 20-95%)"]:::client
+        ThemeSwitch["Dark / Light Mode & Bilingual Accessibility Switcher"]:::client
     end
 
     %% 2. Frontend Application Layer
-    subgraph FrontendTier ["2. Client-Side Dashboard (React 18 + Vite)"]
-        SPA["React Application Coordinator (App.jsx)"]:::frontend
-        LaminateViz["2.5D Multi-Layer Laminate Visualizer"]:::frontend
-        DecaySim["Biophysical Shelf-Life SVG Simulator"]:::frontend
-        LabelMock["FSSAI 2020 SVG Pouch Label Studio"]:::frontend
+    subgraph FrontendTier ["2. Client-Side Dashboard (React 18 + Vite + Tailwind)"]
+        SPA["React Coordinator & ErrorBoundary (App.jsx)"]:::frontend
+        LaminateViz["2.5D Multi-Layer Laminate Stack Visualizer"]:::frontend
+        DecaySim["Biophysical Shelf-Life SVG Simulator (Arrhenius Q10)"]:::frontend
+        LabelAuditorView["Reverse FSSAI Label Artwork Audit Studio (/audit)"]:::frontend
+        PassportView["Live Digital Product Passport Verification (/verify)"]:::frontend
+        ReadinessView["PMFME Packaging Readiness Sheet View"]:::frontend
     end
 
     %% 3. API Gateway Tier
-    subgraph APITier ["3. FastAPI Gateway & Endpoint Layer"]
+    subgraph APITier ["3. FastAPI Gateway & Endpoint Layer (:8000)"]
         RecEndpoint["POST /api/recommend (Laminate & ML Solver)"]:::api
         CompEndpoint["GET /api/compliance/{id} (Statutory Rules)"]:::api
-        PDFEndpoint["POST /api/export-pdf (ReportLab Generator)"]:::api
+        EconEndpoint["POST /api/converter-economics (GSM & Yield)"]:::api
+        CarbonEndpoint["POST /api/carbon-epr (EPR Liability & LCA)"]:::api
+        AuditEndpoint["POST /api/audit-label (FSSAI 2020 Checker)"]:::api
+        PassportEndpoint["GET /api/verify/{batch_id} (SHA-256 DPP)"]:::api
+        PDFEndpoint["POST /api/export-pdf (ReportLab 1-Page Engine)"]:::api
     end
 
-    %% 4. Biophysical & ML Engine
+    %% 4. Biophysical & Enterprise Engines
     subgraph EngineTier ["4. Biophysical Kinetics & Material Science Engine"]
         TetensFormula["Tetens Equation (Saturation Vapor Pressure ps)"]:::engine
         WVTRKinetics["Fickian Sorption Kinetics (Target WVTR)"]:::engine
         OTRKinetics["Arrhenius Q10 & Respiration (Target OTR)"]:::engine
         SolverCore["Constraint Solver (Triplex / Foil / EVOH / EMAP)"]:::engine
         MLModel["Scikit-Learn DecisionTree (92.2% CV Accuracy)"]:::engine
-        PhysicsVeto["Authoritative Biophysical Veto (Safety Factor >= 1.0)"]:::engine
+        EconomicsEngine["Converter Economics & Spoilage ROI Solver"]:::engine
+        SustainabilityEngine["Carbon LCA & CPCB EPR Liability Engine"]:::engine
+        AuditEngine["FSSAI 2020 & Legal Metrology Artwork Auditor"]:::engine
+        PassportEngine["Cryptographic SHA-256 Digital Passport Generator"]:::engine
     end
 
     %% 5. Statutory Compliance & Regulations Layer
@@ -75,12 +85,14 @@ graph TD
         BIS_Codes["BIS Indian Standards (IS 10146, IS 12252, IS 8970)"]:::legal
         IS9845_Matrix["IS 9845 Overall Migration Limits (Simulants A-D)"]:::legal
         CPCB_EPR["CPCB Plastic Waste Management & EPR (Category I-IV)"]:::legal
-        FSSAI_Check["FSSAI 2020 9-Point Mandatory Display Checklist"]:::legal
+        FSSAI_Check["FSSAI 2020 9-Point Mandatory Display Checklist [✔]"]:::legal
     end
 
     %% 6. Deliverables & Output Artifacts
     subgraph DeliverablesTier ["6. Statutory Deliverables & Visual Artifacts"]
         LaminateSpec["Engineered Food-Grade Laminate Specification"]:::output
+        DPPQR["Tamper-Proof QR Digital Product Passport (/verify)"]:::output
+        AuditScore["FSSAI 10-Point Label Compliance Certificate"]:::output
         ReadinessCert["Official 1-Page PMFME Packaging Readiness Certificate (PDF)"]:::output
     end
 
@@ -88,47 +100,58 @@ graph TD
     User --> VoiceInput
     User --> CropSelector
     User --> ParamSliders
+    User --> ThemeSwitch
 
     VoiceInput --> SPA
     CropSelector --> SPA
     ParamSliders --> SPA
+    ThemeSwitch --> SPA
 
     SPA -->|1. Submit Commodity Physics & Climate| RecEndpoint
     SPA -->|2. Request Regulatory Rules & Simulants| CompEndpoint
+    SPA -->|3. Evaluate Converter Economics| EconEndpoint
+    SPA -->|4. Compute EPR Liability & LCA| CarbonEndpoint
+    SPA -->|5. Audit Label Artwork| AuditEndpoint
+    SPA -->|6. Verify Batch Passport| PassportEndpoint
+    SPA -->|7. Generate Official PDF| PDFEndpoint
 
     RecEndpoint --> TetensFormula --> WVTRKinetics
     RecEndpoint --> OTRKinetics
     WVTRKinetics & OTRKinetics --> SolverCore
     RecEndpoint --> MLModel
-    SolverCore & MLModel --> PhysicsVeto
+    SolverCore & MLModel --> FSSAI_Sched & BIS_Codes & IS9845_Matrix & CPCB_EPR
 
-    PhysicsVeto --> FSSAI_Sched & BIS_Codes & IS9845_Matrix & CPCB_EPR
+    EconEndpoint --> EconomicsEngine
+    CarbonEndpoint --> SustainabilityEngine
+    AuditEndpoint --> AuditEngine
+    PassportEndpoint --> PassportEngine
+
     CompEndpoint --> FSSAI_Check & IS9845_Matrix
-
-    PhysicsVeto -->|Target WVTR / OTR & Selected Layers| SPA
-    FSSAI_Sched & BIS_Codes & IS9845_Matrix & CPCB_EPR -->|Statutory Standards| SPA
 
     SPA --> LaminateViz
     SPA --> DecaySim
-    SPA --> LabelMock
-    SPA --> LaminateSpec
+    SPA --> LabelAuditorView
+    SPA --> PassportView
+    SPA --> ReadinessView
 
-    SPA -->|3. Compile Official Verification Payload| PDFEndpoint
-    PDFEndpoint -->|Generate Printable A4 Stream| ReadinessCert
+    LaminateViz --> LaminateSpec
+    PassportView --> DPPQR
+    LabelAuditorView --> AuditScore
+    PDFEndpoint --> ReadinessCert
 ```
 
 ---
 
 ## 🧮 Mathematical Foundations & Biophysical Kinetics
 
-PackAI India abandons superficial static lookup tables in favor of deterministic biophysical equations:
+PackAI India replaces static lookup tables with deterministic biophysical equations:
 
 ### 1. Water Vapor Transmission Rate (WVTR) Demand
-Governed by moisture sorption driving force under ambient temperature $T$ and relative humidity $R_1$, package equilibrium relative humidity $R_2$, dry solid mass $W_s$, critical moisture limit $M_c$, initial moisture $M_0$, pouch area $A$, and shelf life $\theta$:
+Governed by moisture sorption driving force under ambient temperature $T$ and relative humidity $R_1$, package internal equilibrium relative humidity $R_2$, dry solid mass $W_s$, critical moisture limit $M_c$, initial moisture $M_0$, pouch area $A$, and target shelf life $\theta$:
 
 $$\text{WVTR}_{\text{req}} = \frac{W_s \cdot (M_c - M_0)}{A \cdot \theta \cdot (R_1 - R_2) \cdot p_s(T)}$$
 
-Where saturation vapor pressure $p_s(T)$ is dynamically calculated via the **Tetens Equation**:
+Where saturation vapor pressure $p_s(T)$ is dynamically computed via the **Tetens Equation**:
 
 $$p_s(T) = 0.61078 \exp\left(\frac{17.27 \cdot T}{T + 237.3}\right) \quad (\text{in kPa})$$
 
@@ -148,16 +171,63 @@ $$\text{SF} = \min\left(\frac{\text{WVTR}_{\text{allowable}}}{\text{WVTR}_{\text
 
 ---
 
+## 💼 Enterprise Engineering & Compliance Modules
+
+PackAI India extends far beyond material recommendations by integrating 6 production-grade modules:
+
+### 1. 🏭 Industrial Converter Economics & GSM Solver (`backend/engine/economics_engine.py`)
+- **Composite GSM & Film Yield**: Accurate resin density-driven mass calculation across multi-layer substrates (BOPP: $0.91$, PET: $1.40$, LDPE: $0.92$, HDPE: $0.95$, Al-Foil: $2.70$, EVOH: $1.17$, PLA: $1.25\text{ g/cm}^3$):
+  $$\text{GSM}_{\text{total}} = \sum (t_i \cdot \rho_i) + \text{adhesive\_gsm}, \quad \text{Yield } (\text{m}^2/\text{kg}) = \frac{1000}{\text{GSM}_{\text{total}}}$$
+- **Pouch Unit Costing**: Computes exact raw material cost plus gravure conversion margin ($₹35/\text{kg}$), slit web trim loss ($4\%$), and reports unit cost ($₹/\text{pouch}$ and $₹/1000\text{ pouches}$).
+- **Spoilage vs. Barrier ROI Engine**: Quantifies protected inventory value vs. unlaminated packaging, proving that upgrading to high-barrier laminates delivers a **$300\%\text{--}800\%$ net financial return** by eliminating humidity sogginess and oxidative rancidity.
+
+### 2. 🌍 CPCB EPR Financial Liability & Carbon LCA Engine (`backend/engine/sustainability_engine.py`)
+- **Embodied Carbon LCA**: Cradle-to-gate carbon footprint intensity calculations ($\text{g CO}_2\text{e/pouch}$ and $\text{kg CO}_2\text{e}/10\text{k pouches}$) using peer-reviewed Ecoinvent/PlasticsEurope emission factors.
+- **CPCB EPR Schedule II Compliance**: Automatic classification into **Category I (Rigid)**, **Category II (Flexible Mono-material)**, **Category III (Multi-layered Plastic / MLP)**, and **Category IV (Compostable IS 17088)**.
+- **Annual Financial Liability**: Calculates brand owner fee obligations (₹/MT and ₹/year) and assigns an actionable **Circularity Grade (A+ to C)** with regulatory circularity transition guidance.
+
+### 3. 🛡️ Live Digital Product Passport (`/verify` route & `backend/engine/passport_engine.py`)
+- **Cryptographic SHA-256 Integrity Seal**: Tamper-proof batch verification seal computed from batch ID, commodity ID, laminate structure, and regulatory parameters.
+- **Statutory Registry Record**: Displays verified BIS standards, IS 9845 overall migration limit ($\le 60\ \text{mg/kg}$), NABL ISO/IEC 17025 conformity, and 1-year certificate validity.
+- **Mobile-Responsive Portal**: Accessible via QR codes on physical pouches or certificates, allowing food safety inspectors and consumers to verify packaging authenticity in real time.
+
+### 4. 🔍 Reverse FSSAI Label Compliance Artwork Auditor (`/audit` route & `backend/engine/audit_engine.py`)
+- **10 Statutory Checks**: Reverse audits draft pouch text against FSSAI (Labelling & Display) Regulations 2020 and Legal Metrology (Packaged Commodities) Rules 2011:
+  1. 14-Digit FSSAI License with state/central prefix validation
+  2. Mandatory Veg / Non-Veg emblem declaration
+  3. Net Quantity with statutory unit spacing
+  4. Unit Sale Price (USP per g / kg / ml mandatory since Dec 2022)
+  5. Maximum Retail Price (MRP) with mandatory "(incl. of all taxes)"
+  6. Date of Packaging / Manufacturing
+  7. Best Before / Expiry declaration
+  8. Batch / Lot identification number
+  9. Ingredients List & Allergen Advisory warning
+  10. Mandatory Nutritional Information Table (Energy, Protein, Carbs, Sugars, Fat, Sodium)
+- **Interactive Quick-Loaders**: "Load Compliant Sample" ($100\%$ score) and "Load Defective Sample" ($0\%$ score, flagging all statutory non-conformances with legal remediation guides).
+
+### 5. 🌓 Global Dark Mode & Accessibility Architecture (`ThemeContext.jsx`)
+- **Theme Engine**: Instant Sun/Moon toggle in the top navbar with system preference detection (`prefers-color-scheme`) and persistent `localStorage` synchronization.
+- **Full Dark Theming**: Applied across all 4 stepper screens, charts, Canvas/SVG shelf-life simulators, modal dialogs, and verification views.
+- **Fault-Tolerant React Error Boundary**: Gracefully isolates unexpected component rendering anomalies with a friendly recovery card and "Return to Dashboard" reset button.
+
+### 6. 📄 Production ReportLab PDF Audit Certificate (`backend/engine/pdf_generator.py`)
+- **Strict 1-Page A4 Guarantee**: Formatted under precise geometric coordinate layouts ensuring $100\%$ single-page containment without multi-page spills even under massive 650+ character input strings.
+- **TrueType Unicode Typography**: Employs the `DejaVuSans` / `DejaVuSans-Bold` font family for crisp native rendering of math symbols ($g/\text{m}^2$, $\text{m}^2/\text{kg}$, $^\circ\text{C}$), standard Indian currency notation (`Rs. `), and uniform `[✔]` checklist glyphs.
+- **Defensive Text Truncation**: Truncates on whitespace word boundaries to prevent ugly mid-word cutoffs (`...`).
+- **Dynamic In-Memory QR Code**: Generates high-density vector QR code linking directly to the live Digital Product Passport verification route.
+
+---
+
 ## 🇮🇳 The Statutory Compliance Layer (India Standards)
 
 | Regulatory Body | Statute / Standard | Operationalized Engine Feature |
 |---|---|---|
 | **FSSAI** | **Food Safety & Standards (Packaging) Regulations, 2018** | Automated mapping of commodity to **Schedule IV** (food category specific restrictions) and **Schedule I/II/III** (approved polymers, paperboards, and tinplate). |
 | **BIS** | **Bureau of Indian Standards** | Direct injection of mandatory Indian Standards into the specification (e.g., `IS 10146:2021` for PE contact layer, `IS 12252:2018` for BOPP/PET, `IS 8970` for Aluminium foil). |
-| **BIS** | **IS 9845 Overall Migration Limits (OML)** | Automated evaluation of Overall Migration Limits ($\le 60\text{ mg/kg}$ or $\le 10\text{ mg/dm}^2$) across **Simulant A** (distilled water), **Simulant B** ($3\%$ acetic acid), **Simulant C** ($10\%$ ethanol), and **Simulant D** ($50\%$ ethanol / rectified spirit) based on pH and fat content. |
-| **CPCB / MoEFCC** | **Plastic Waste Management Rules 2016 & 2022 EPR Amendment** | Classification into **Category I** (Rigid), **Category II** (Single/Multi-layer flexible), **Category III** (Multi-layered plastics with at least one non-plastic layer), or **Category IV** (Compostable). |
-| **FSSAI** | **Food Safety & Standards (Labelling & Display) Regulations, 2020** | Live interactive 9-point packaging checklist validation + interactive bilingual front/back pouch mockup renderer. |
-| **MoFPI** | **PMFME Scheme Documentation** | Exportable, official 1-page A4 **PMFME Packaging Readiness Certificate (PDF)** generated via ReportLab with zero multi-page spill guarantee. |
+| **BIS** | **IS 9845 Overall Migration Limits (OML)** | Automated evaluation of Overall Migration Limits ($\le 60\text{ mg/kg}$ or $\le 10\text{ mg/dm}^2$) across **Simulant A** (distilled water), **Simulant B** ($3\%$ acetic acid), **Simulant C** ($15\%$ ethanol), and **Simulant D** (Iso-octane / n-Heptane / Olive oil) based on pH and fat content. |
+| **CPCB / MoEFCC** | **Plastic Waste Management Rules 2016 & 2022/2024 Amendments** | Classification into **Category I** (Rigid), **Category II** (Flexible mono-material), **Category III** (Multi-layered plastics with at least one non-plastic layer), or **Category IV** (Compostable). |
+| **FSSAI** | **Food Safety & Standards (Labelling & Display) Regulations, 2020** | Live interactive 9-point packaging checklist validation with uniform `[✔]` checkmarks + interactive bilingual front/back pouch mockup renderer. |
+| **MoFPI** | **PMFME Scheme Documentation** | Exportable, official 1-page A4 **PMFME Packaging Readiness Certificate (PDF)** generated via ReportLab with embedded dynamic QR verification. |
 
 ---
 
@@ -184,7 +254,7 @@ The system ships with pre-calibrated baseline chemical and physical data for 18 
 17. **Cured Tendu Leaves** (*Sambalpur, Odisha / Balaghat, MP*) — Forest micro-produce conditioning and mold prevention.
 18. **Pearl Millet / Bajra Cookies** (*Barmer, Rajasthan*) — Unsaturated fat rancidity, crispness retention.
 
-> **Dynamic Custom Mode:** Enterpreneurs can toggle to **Custom / Unlisted Commodity** mode to specify arbitrary crops (e.g., Red Dragonfruit, Murabba, Cold-Pressed Mustard Oil) and receive dynamic heuristic compliance mapping.
+> **Dynamic Custom Mode:** Entrepreneurs can toggle to **Custom / Unlisted Commodity** mode to specify arbitrary crops (e.g., Red Dragonfruit, Murabba, Cold-Pressed Mustard Oil) and receive dynamic heuristic compliance mapping.
 
 ---
 
@@ -215,7 +285,8 @@ SIH-demo-sm2/
 │   ├── requirements.txt            # Python production and testing dependencies
 │   ├── stress_test.py              # Automated 6-scenario full-system adversarial stress runner
 │   ├── test_api.py                 # Backend REST API integration test suite
-│   ├── test_modules.py             # Unit test suite for the 4 enterprise engineering modules
+│   ├── test_dom_visuals.py         # Automated Headless Chrome CDP visual DOM test suite
+│   ├── test_modules.py             # Unit test suite for the 4 enterprise engineering modules (19 tests)
 │   └── test_physics.py             # Biophysical formulas and kinetics unit test suite
 ├── documents/
 │   ├── extracted_build_spec.txt    # Extracted technical specifications from MoFPI
@@ -235,10 +306,11 @@ SIH-demo-sm2/
     │   │   ├── SimulantProtocolCard.jsx   # IS 9845 food simulant test card component
     │   │   └── VerifyPassport.jsx         # Live Digital Product Passport (/verify) with cryptographic seal
     │   ├── context/
-    │   │   └── LanguageContext.jsx        # Bilingual (English & Hindi) state provider
+    │   │   ├── LanguageContext.jsx        # Bilingual (English & Hindi) state provider
+    │   │   └── ThemeContext.jsx           # Dark / Light mode provider with localStorage sync
     │   ├── hooks/
     │   │   └── useVoiceInput.js           # Web Speech API speech-to-text hook
-    │   ├── App.jsx                        # 4-stage navigation workflow coordinator & view router
+    │   ├── App.jsx                        # 4-stage navigation workflow coordinator & ErrorBoundary
     │   ├── index.css                      # Tailwind styling & print media rules
     │   └── main.jsx                       # React 18 DOM root entrypoint
     ├── index.html                         # HTML5 template with Devanagari typography
@@ -248,41 +320,6 @@ SIH-demo-sm2/
     ├── tailwind.config.js                 # Custom color palettes & typography tokens
     └── vite.config.js                     # Vite build configuration with proxy to FastAPI
 ```
-
----
-
-## 💼 Enterprise Engineering & Compliance Modules
-
-PackAI India extends far beyond simple material recommendations by integrating four production-grade industrial modules:
-
-### 1. 🏭 Industrial Converter Economics & GSM Solver (`backend/engine/economics_engine.py`)
-- **Composite GSM & Yield**: Accurate density-driven mass calculation ($\text{GSM} = \sum t_i \cdot \rho_i + \text{adhesive}$) across polymers (BOPP, PET, MET-PET, LDPE, HDPE, Al-Foil, EVOH, PLA, Paper) and standard film yield ($m^2/\text{kg} = 1000 / \text{GSM}$).
-- **Pouch Unit Costing**: Computes exact raw material cost plus conversion margin (₹35/kg gravure printing & pouching), reporting unit cost (₹/pouch), cost per 1,000 pouches, and packaging cost % against retail price.
-- **Spoilage vs. Packaging ROI Solver**: Quantifies inventory value protected vs. unlaminated packaging, proving that upgrading to high-barrier laminates delivers a **$300\%\text{--}800\%$ net financial return** by eliminating humidity sogginess and rancidity.
-
-### 2. 🌍 CPCB EPR Financial Liability & Carbon LCA Engine (`backend/engine/sustainability_engine.py`)
-- **Embodied Carbon LCA**: Cradle-to-gate carbon footprint intensity calculations ($g\ \text{CO}_2\text{e} / \text{pouch}$ and $\text{kg}\ \text{CO}_2\text{e} / 10\text{k pouches}$) using peer-reviewed Ecoinvent/PlasticsEurope emission factors.
-- **CPCB EPR Schedule II Compliance**: Automatic classification into **Category I (Rigid)**, **Category II (Flexible Mono-material)**, **Category III (Multi-layered Plastic / MLP)**, and **Category IV (Compostable IS 17088)**.
-- **Annual Financial Liability**: Calculates brand owner fee obligations (₹/MT and ₹/year) and assigns an actionable **Circularity Grade (A+ to C)** with regulatory guidance.
-
-### 3. 🛡️ Live Digital Product Passport (`/verify` route & `backend/engine/passport_engine.py`)
-- **Cryptographic SHA-256 Integrity Seal**: Tamper-proof batch verification seal computed from batch ID, commodity ID, laminate structure, and regulatory parameters.
-- **Statutory Registry Record**: Displays verified BIS standards, IS 9845 overall migration limit ($\le 60\ \text{mg/kg}$), NABL ISO/IEC 17025 conformity, and 1-year certificate validity.
-- **Mobile-Responsive Portal**: Accessible via QR codes on physical pouches or certificates, allowing food safety inspectors and consumers to verify packaging authenticity in real time.
-
-### 4. 🔍 Reverse FSSAI Label Compliance Artwork Auditor (`/audit` route & `backend/engine/audit_engine.py`)
-- **10 Statutory Checks**: Reverse audits draft pouch text against FSSAI (Labelling & Display) Regulations 2020 and Legal Metrology (Packaged Commodities) Rules 2011:
-  1. 14-Digit FSSAI License with state/central prefix validation
-  2. Mandatory Veg / Non-Veg emblem declaration
-  3. Net Quantity with statutory unit spacing
-  4. Unit Sale Price (USP per g / kg / ml mandatory since Dec 2022)
-  5. Maximum Retail Price (MRP) with mandatory "(incl. of all taxes)"
-  6. Date of Packaging / Manufacturing
-  7. Best Before / Expiry declaration
-  8. Batch / Lot identification number
-  9. Ingredients List & Allergen Advisory warning
-  10. Mandatory Nutritional Information Table (Energy, Protein, Carbs, Sugars, Fat, Sodium)
-- **Scoring & Penalties**: Computes compliance score (0–100%), overall verdict, and specific legal citations with actionable remedial text for converters and MSMEs.
 
 ---
 
@@ -347,8 +384,14 @@ python backend/test_physics.py
 # 2. REST API Integration Test Suite
 python backend/test_api.py
 
-# 3. Full-System Adversarial Stress Test Suite
+# 3. Enterprise Engineering Modules Unit Test Suite (19 tests)
+python backend/test_modules.py
+
+# 4. Full-System Adversarial Stress Test Suite (6 scenarios)
 python backend/stress_test.py
+
+# 5. Headless Chrome DevTools Protocol DOM & Visual Test Suite
+python backend/test_dom_visuals.py
 ```
 
 ### Stress Test Matrix Results:
