@@ -1,4 +1,5 @@
 import io
+import os
 import uuid
 from datetime import datetime
 from typing import Dict, Any, List
@@ -10,20 +11,74 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics.shapes import Drawing
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+# Register TrueType font family for crisp Unicode symbols ([✔], m², °C, Rs.)
+UNICODE_FONT = 'Helvetica'
+UNICODE_FONT_BOLD = 'Helvetica-Bold'
+UNICODE_FONT_OBLIQUE = 'Helvetica-Oblique'
+
+try:
+    import matplotlib
+    mpl_font_dir = os.path.join(os.path.dirname(matplotlib.__file__), 'mpl-data', 'fonts', 'ttf')
+    dejavu_regular = os.path.join(mpl_font_dir, 'DejaVuSans.ttf')
+    dejavu_bold = os.path.join(mpl_font_dir, 'DejaVuSans-Bold.ttf')
+    dejavu_oblique = os.path.join(mpl_font_dir, 'DejaVuSans-Oblique.ttf')
+    if os.path.exists(dejavu_regular) and os.path.exists(dejavu_bold):
+        pdfmetrics.registerFont(TTFont('DejaVuSans', dejavu_regular))
+        pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', dejavu_bold))
+        if os.path.exists(dejavu_oblique):
+            pdfmetrics.registerFont(TTFont('DejaVuSans-Oblique', dejavu_oblique))
+        pdfmetrics.registerFontFamily('DejaVuSans', normal='DejaVuSans', bold='DejaVuSans-Bold', italic='DejaVuSans-Oblique' if os.path.exists(dejavu_oblique) else 'DejaVuSans')
+        UNICODE_FONT = 'DejaVuSans'
+        UNICODE_FONT_BOLD = 'DejaVuSans-Bold'
+        UNICODE_FONT_OBLIQUE = 'DejaVuSans-Oblique' if os.path.exists(dejavu_oblique) else 'DejaVuSans'
+except Exception:
+    pass
+
+if UNICODE_FONT == 'Helvetica':
+    for win_font in ['C:/Windows/Fonts/seguisym.ttf', 'C:/Windows/Fonts/seguiemj.ttf']:
+        if os.path.exists(win_font):
+            try:
+                pdfmetrics.registerFont(TTFont('SegoeUISymbol', win_font))
+                UNICODE_FONT = 'SegoeUISymbol'
+                UNICODE_FONT_BOLD = 'SegoeUISymbol'
+                UNICODE_FONT_OBLIQUE = 'SegoeUISymbol'
+                break
+            except Exception:
+                pass
+
 
 def sanitize_text(val: Any) -> str:
-    """Ensure string is clean ASCII/Latin-1 for standard ReportLab canvas."""
+    """Ensure string is clean text for ReportLab canvas without unencoded currency glyphs."""
     if val is None:
         return ""
     s = str(val).strip()
-    s = s.replace('≤', '<=').replace('≥', '>=').replace('µ', 'u').replace('²', '2')
+    s = s.replace('₹', 'Rs. ').replace('\u20b9', 'Rs. ')
+    s = s.replace('≤', '<=').replace('≥', '>=')
     return s
 
+
 def truncate_text(val: Any, max_len: int = 60, add_ellipsis: bool = True) -> str:
+    """Defensive truncation that avoids cutting words in half."""
     s = sanitize_text(val)
-    if len(s) > max_len:
-        return s[:max_len - 3] + "..." if add_ellipsis else s[:max_len]
-    return s
+    if len(s) <= max_len:
+        return s
+    if not add_ellipsis:
+        cut = s[:max_len]
+        last_sp = cut.rfind(' ')
+        if last_sp > max_len // 2:
+            cut = cut[:last_sp]
+        return cut.rstrip()
+    
+    target_len = max_len - 3
+    cut = s[:target_len]
+    last_sp = cut.rfind(' ')
+    if last_sp > target_len // 2:
+        cut = cut[:last_sp]
+    return cut.rstrip() + "..."
+
 
 def build_qr_drawing(verify_url: str, size_mm: float = 22.0) -> Drawing:
     qr_code = QrCodeWidget(verify_url)
@@ -34,6 +89,7 @@ def build_qr_drawing(verify_url: str, size_mm: float = 22.0) -> Drawing:
     d = Drawing(size_pt, size_pt, transform=[size_pt / w, 0, 0, size_pt / h, 0, 0])
     d.add(qr_code)
     return d
+
 
 def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str = "en") -> io.BytesIO:
     buffer = io.BytesIO()
@@ -48,11 +104,11 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
 
     styles = getSampleStyleSheet()
 
-    # Typography Styles
+    # Typography Styles using Unicode font family
     header_style = ParagraphStyle(
         'MainHeader',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=UNICODE_FONT_BOLD,
         fontSize=12,
         leading=14.5,
         textColor=colors.HexColor('#0f3b23')
@@ -61,7 +117,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     sub_header_style = ParagraphStyle(
         'SubHeader',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=UNICODE_FONT,
         fontSize=7,
         leading=9,
         textColor=colors.HexColor('#166534')
@@ -70,7 +126,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     badge_style = ParagraphStyle(
         'BadgeText',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=UNICODE_FONT_BOLD,
         fontSize=6.5,
         leading=8.5,
         textColor=colors.HexColor('#15803d')
@@ -79,7 +135,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     section_heading = ParagraphStyle(
         'SectionHeading',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=UNICODE_FONT_BOLD,
         fontSize=8,
         leading=10,
         textColor=colors.HexColor('#134e2b'),
@@ -89,7 +145,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     body_style = ParagraphStyle(
         'BodyDark',
         parent=styles['Normal'],
-        fontName='Helvetica',
+        fontName=UNICODE_FONT,
         fontSize=6.5,
         leading=8.5,
         textColor=colors.HexColor('#1f2937')
@@ -98,7 +154,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     body_bold = ParagraphStyle(
         'BodyBold',
         parent=styles['Normal'],
-        fontName='Helvetica-Bold',
+        fontName=UNICODE_FONT_BOLD,
         fontSize=6.5,
         leading=8.5,
         textColor=colors.HexColor('#111827')
@@ -107,16 +163,16 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     checklist_style = ParagraphStyle(
         'ChecklistText',
         parent=styles['Normal'],
-        fontName='Helvetica',
-        fontSize=6,
-        leading=8,
+        fontName=UNICODE_FONT,
+        fontSize=6.5,
+        leading=8.5,
         textColor=colors.HexColor('#1f2937')
     )
 
     disclaimer_style = ParagraphStyle(
         'Disclaimer',
         parent=styles['Normal'],
-        fontName='Helvetica-Oblique',
+        fontName=UNICODE_FONT_OBLIQUE,
         fontSize=5.5,
         leading=7.5,
         textColor=colors.HexColor('#6b7280'),
@@ -222,8 +278,28 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     if layers:
         layer_strings = []
         for l in layers[:3]:
-            l_name = truncate_text(l.get('short_name', l.get('name', 'Layer')), 24)
-            l_role = truncate_text(l.get('role_en', 'Protection'), 55)
+            raw_name = l.get('short_name') or l.get('name') or 'Layer'
+            l_name = truncate_text(raw_name, 28, add_ellipsis=False)
+            
+            raw_role = l.get('role_en', 'Protection').strip()
+            # Clean up role descriptions so key technical phrases render completely without mid-word cuts
+            if "flex-crack resistance" in raw_role:
+                clean_role = "Optical clarity, surface gloss & flex-crack resistance"
+            elif "blocking 98%" in raw_role or "blocks 98%" in raw_role:
+                clean_role = "Vacuum metallized barrier; blocks 98% light/UV & moisture"
+            elif "puncture resistance" in raw_role:
+                clean_role = "Low SIT heat seal (105°C) & high puncture strength"
+            elif "pinhole" in raw_role or "hermetic" in raw_role:
+                clean_role = "Hermetic sealing & exceptional puncture strength"
+            else:
+                # Strip trailing test standards like (ASTM D1922)
+                clean_role = raw_role
+                if "(" in clean_role and ")" in clean_role:
+                    idx = clean_role.rfind("(")
+                    if any(t in clean_role[idx:] for t in ["ASTM", "IS ", "ISO", "DIN"]):
+                        clean_role = clean_role[:idx].strip().rstrip(",- ")
+            
+            l_role = truncate_text(clean_role, 80, add_ellipsis=True)
             layer_strings.append(f"• <b>{l_name}</b>: {l_role}")
         layer_breakdown_html = "<br/>".join(layer_strings)
     else:
@@ -232,11 +308,35 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
     econ = commodity_data.get('economics', {})
     sust = commodity_data.get('sustainability', {})
     gsm_val = econ.get('gsm_metrics', {}).get('total_gsm') or specs.get('total_gsm', 73.8)
-    yield_val = econ.get('gsm_metrics', {}).get('film_yield_m2_per_kg') or specs.get('film_yield_m2_per_kg', 13.5)
+    yield_val = econ.get('gsm_metrics', {}).get('film_yield_m2_per_kg') or specs.get('film_yield_m2_per_kg', 13.55)
     cost_val = econ.get('unit_cost_metrics', {}).get('cost_per_pouch_inr') or specs.get('unit_cost_inr', 0.55)
-    epr_val = sust.get('cpcb_epr_compliance', {}).get('estimated_annual_epr_liability_inr', 5800.0)
+    if isinstance(cost_val, (int, float)):
+        cost_str = f"{cost_val:.2f}"
+    else:
+        cost_str = str(cost_val).replace('₹', '').replace('Rs.', '').strip()
+
+    epr_raw = sust.get('cpcb_epr_compliance', {}).get('estimated_annual_epr_liability_inr')
+    if epr_raw is None:
+        epr_raw = 5800.0
+    epr_val = abs(float(epr_raw))
+    
     epr_cat_name = sust.get('cpcb_epr_compliance', {}).get('category_name') or commodity_data.get('epr_category', 'Category III MLP')
-    epr_cat_short = truncate_text(epr_cat_name, 28)
+    if "Category III" in epr_cat_name:
+        epr_cat_clean = "Category III MLP"
+    elif "Category II" in epr_cat_name:
+        epr_cat_clean = "Category II Mono-PE"
+    elif "Category I" in epr_cat_name:
+        epr_cat_clean = "Category I Rigid"
+    elif "Category IV" in epr_cat_name:
+        epr_cat_clean = "Category IV Compostable"
+    else:
+        epr_cat_clean = truncate_text(epr_cat_name, 24, add_ellipsis=False)
+
+    econ_str = (
+        f"Composite GSM: <b>{gsm_val} g/m²</b> (Yield: {yield_val} m²/kg) | "
+        f"Est. Unit Cost: <b>Rs. {cost_str}/pouch</b> | "
+        f"CPCB EPR: {epr_cat_clean} (~Rs. {int(round(epr_val)):,}/yr)"
+    )
 
     spec_data = [
         [Paragraph("Target Mathematical Demand:", body_bold),
@@ -248,7 +348,7 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
         [Paragraph("Certified Barrier Performance:", body_bold),
          Paragraph(f"OTR: {otr_spec} | WVTR: {wvtr_spec} | MAP Gas Flush: {map_mix}", body_style)],
         [Paragraph("Converter Economics & EPR:", body_bold),
-         Paragraph(f"Composite GSM: <b>{gsm_val} g/m²</b> (Yield: {yield_val} m²/kg) | Est. Unit Cost: <b>₹{cost_val}/pouch</b> | CPCB EPR: {epr_cat_short} (~₹{epr_val:,.0f}/yr)", body_style)],
+         Paragraph(econ_str, body_style)],
         [Paragraph("Bio-Physical Rationale:", body_bold),
          Paragraph(rationale, body_style)]
     ]
@@ -283,14 +383,35 @@ def generate_packaging_readiness_pdf(commodity_data: Dict[str, Any], lang: str =
 
     epr_cat = truncate_text(commodity_data.get('epr_category', 'Category III Multilayer Flexible Plastic'), 60)
     
-    # Simulants from protocol (capped at 3)
+    # Concise Simulants from protocol
     sim_proto = commodity_data.get('simulant_protocol', {})
     simulants = sim_proto.get('simulants', [])
     if simulants:
-        sim_desc_list = [f"<b>{s['simulant_code']}</b>: {truncate_text(s.get('description', s.get('name', 'Simulant')), 42)} ({truncate_text(s.get('condition', ''), 28)})" for s in simulants[:3]]
+        sim_desc_list = []
+        for s in simulants[:3]:
+            code = s.get('simulant_code') or s.get('code') or 'Simulant'
+            if 'Simulant A' in code:
+                sim_line = "• <b>Simulant A</b>: Distilled Water (Aqueous Foods) | 40°C ± 2°C for 10 Days"
+            elif 'Simulant B' in code:
+                sim_line = "• <b>Simulant B</b>: 3% w/v Acetic Acid (Acidic Foods) | 40°C ± 2°C for 10 Days"
+            elif 'Simulant C' in code:
+                sim_line = "• <b>Simulant C</b>: 15% Ethanol (Sweet / Moist Foods) | 40°C ± 2°C for 10 Days"
+            elif 'Simulant D' in code:
+                sim_line = "• <b>Simulant D</b>: Iso-octane / n-Heptane (Fatty Foods) | 20°C for 30 Mins"
+            else:
+                raw_d = s.get('description') or s.get('name') or 'Simulant'
+                d_clean = raw_d.split('(')[0].strip()
+                cond = s.get('condition', '40°C for 10 Days')
+                if "(or" in cond:
+                    cond = cond.split("(or")[0].strip()
+                sim_line = f"• <b>{code}</b>: {truncate_text(d_clean, 35, add_ellipsis=False)} | {truncate_text(cond, 25, add_ellipsis=False)}"
+            sim_desc_list.append(sim_line)
         simulant_html = "<br/>".join(sim_desc_list)
     else:
-        simulant_html = "<b>Simulant A</b>: Distilled Water (40°C, 10d) | <b>Simulant D</b>: n-Heptane (20°C, 30m)"
+        simulant_html = (
+            "• <b>Simulant A</b>: Distilled Water (Aqueous Foods) | 40°C ± 2°C for 10 Days<br/>"
+            "• <b>Simulant D</b>: Iso-octane / n-Heptane (Fatty Foods) | 20°C for 30 Mins"
+        )
 
     comp_data = [
         [Paragraph("FSSAI Regulations, 2018:", body_bold),
