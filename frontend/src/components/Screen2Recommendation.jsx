@@ -85,18 +85,21 @@ export const Screen2Recommendation = ({ recommendation, onNext, onBack }) => {
 
       {/* Critical Climate / Barrier Advisory Banner */}
       {activeWarning && (
-        <div className="bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-400 dark:border-amber-700 rounded-2xl p-4 flex items-start gap-3 shadow-sm">
-          <AlertTriangle className="w-6 h-6 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wide">
-                MoFPI Packaging Safety Advisory
+        <div className="bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent dark:from-amber-950/40 dark:via-slate-900 dark:to-transparent border-2 border-amber-400 dark:border-amber-600/70 rounded-2xl p-5 flex items-start gap-4 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-amber-500" />
+          <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 border border-amber-500/30 shadow-xs">
+            <AlertTriangle className="w-5 h-5 animate-pulse" />
+          </div>
+          <div className="flex-1 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="text-sm font-black text-amber-950 dark:text-amber-200 uppercase tracking-wider">
+                MoFPI Packaging Safety & Shelf-Life Advisory
               </h4>
-              <span className="text-[10px] bg-amber-200 dark:bg-amber-900/80 text-amber-900 dark:text-amber-300 px-2 py-0.5 rounded font-mono font-bold border border-amber-300 dark:border-amber-700">
-                CRITICAL BARRIER ALERT
+              <span className="text-[10px] bg-amber-500 text-white dark:bg-amber-500 dark:text-slate-950 px-2.5 py-0.5 rounded-full font-mono font-black uppercase tracking-wider shadow-xs">
+                MANDATORY MITIGATION
               </span>
             </div>
-            <p className="text-xs text-amber-800 dark:text-amber-300 mt-1 font-medium leading-relaxed">
+            <p className="text-xs text-amber-900 dark:text-amber-300 font-medium leading-relaxed">
               {activeWarning}
             </p>
           </div>
@@ -164,64 +167,87 @@ export const Screen2Recommendation = ({ recommendation, onNext, onBack }) => {
 
       {/* Barrier Gauges Card */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4 transition-colors duration-200">
-        <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-          <span>{t('barrier_profile_title')}</span>
-        </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <span>{t('barrier_profile_title')}</span>
+          </h3>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">
+            ASTM D3985 / ASTM F1249 Certified Standard
+          </span>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* Moisture Gauge */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-300 block">{t('moisture_barrier')}</span>
-            <div className="flex items-center gap-1.5">
-              {[1, 2, 3, 4, 5].map((idx) => (
-                <div
-                  key={idx}
-                  className={`h-2 flex-1 rounded-full ${
-                    idx <= moistureBadge.dots ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'
-                  }`}
-                />
-              ))}
+          {/* Moisture Barrier Meter */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('moisture_barrier')}</span>
+              <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${moistureBadge.bg}`}>
+                {moistureBadge.label}
+              </span>
             </div>
-            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold border ${moistureBadge.bg}`}>
-              {moistureBadge.label}
-            </span>
+
+            {/* Continuous Gradient Meter Bar */}
+            <div className="space-y-1">
+              <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden p-0.5">
+                <div 
+                  className="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 rounded-full transition-all duration-500 shadow-xs"
+                  style={{ width: `${(moistureBadge.dots / 5) * 100}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                <span>WVTR: {technical_specs?.wvtr_range || '< 1.5 g/m²/d'}</span>
+                <span>{moistureBadge.dots * 20}%</span>
+              </div>
+            </div>
           </div>
 
-          {/* Oxygen Gauge */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-300 block">{t('oxygen_barrier')}</span>
-            <div className="flex items-center gap-1.5">
-              {[1, 2, 3, 4, 5].map((idx) => (
-                <div
-                  key={idx}
-                  className={`h-2 flex-1 rounded-full ${
-                    idx <= oxygenBadge.dots ? 'bg-blue-500' : 'bg-slate-200 dark:bg-slate-700'
-                  }`}
-                />
-              ))}
+          {/* Oxygen Barrier Meter */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('oxygen_barrier')}</span>
+              <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${oxygenBadge.bg}`}>
+                {oxygenBadge.label}
+              </span>
             </div>
-            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold border ${oxygenBadge.bg}`}>
-              {oxygenBadge.label}
-            </span>
+
+            {/* Continuous Gradient Meter Bar */}
+            <div className="space-y-1">
+              <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden p-0.5">
+                <div 
+                  className="h-full bg-gradient-to-r from-sky-500 via-blue-500 to-indigo-500 rounded-full transition-all duration-500 shadow-xs"
+                  style={{ width: `${(oxygenBadge.dots / 5) * 100}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                <span>OTR: {technical_specs?.otr_range || '< 2.0 cc/m²/d'}</span>
+                <span>{oxygenBadge.dots * 20}%</span>
+              </div>
+            </div>
           </div>
 
-          {/* Puncture / Mechanical Strength */}
-          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-300 block">{t('strength_barrier')}</span>
-            <div className="flex items-center gap-1.5">
-              {[1, 2, 3, 4, 5].map((idx) => (
-                <div
-                  key={idx}
-                  className={`h-2 flex-1 rounded-full ${
-                    idx <= strengthBadge.dots ? 'bg-amber-500' : 'bg-slate-200 dark:bg-slate-700'
-                  }`}
-                />
-              ))}
+          {/* Puncture / Mechanical Strength Meter */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <div className="flex justify-between items-center text-xs">
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{t('strength_barrier')}</span>
+              <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${strengthBadge.bg}`}>
+                {strengthBadge.label}
+              </span>
             </div>
-            <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold border ${strengthBadge.bg}`}>
-              {strengthBadge.label}
-            </span>
+
+            {/* Continuous Gradient Meter Bar */}
+            <div className="space-y-1">
+              <div className="h-2.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden p-0.5">
+                <div 
+                  className="h-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-full transition-all duration-500 shadow-xs"
+                  style={{ width: `${(strengthBadge.dots / 5) * 100}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+                <span>ASTM F1306 Dart Drop</span>
+                <span>{strengthBadge.dots * 20}%</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

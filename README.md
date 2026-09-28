@@ -216,6 +216,15 @@ PackAI India extends far beyond material recommendations by integrating 6 produc
 - **Defensive Text Truncation**: Truncates on whitespace word boundaries to prevent ugly mid-word cutoffs (`...`).
 - **Dynamic In-Memory QR Code**: Generates high-density vector QR code linking directly to the live Digital Product Passport verification route.
 
+### 7. 🎨 Enterprise AgriTech Packaging Studio & Interactive Pouch Mockup
+- **Photorealistic Stand-Up Pouch**: Features industrial crimped heat-seal textures (`pouch-crimp-pattern`), diagonal plastic gloss reflections (`pouch-gloss-reflection`), tear notches, and a Euro-slot display punch.
+- **FMCG Dot-Matrix Coding**: Monospace ink-jet factory stamping for Batch Number, Date of Packing, and MRP (`(incl. of all taxes)`).
+- **Statutory Glyphs**: Exact 1:1 FSSAI Green Veg Emblem, CPCB Mobius loop recycling icon (`♳ 7 OTHER (MLP)` / `4 LDPE`), and crisp EAN-13 vector SVG barcode.
+- **Dynamic SKU Weight Switcher**: Seamless real-time switching between `100g`, `250g`, `500g`, and `1kg` packs, auto-scaling both per-100g and per-pack nutritional values and pricing.
+- **Simulation Scenario Presets**: Instant one-click presets for `🌾 Baseline ODOP`, `🔥 Extreme Tropical Warehousing` ($42^\circ\text{C}$, $90\%\text{ RH}$), and `❄️ Cold Chain Distribution` ($4^\circ\text{C}$, $85\%\text{ RH}$).
+- **2.5D Laminate Cross-Section Explorer**: Realistic visual textures for Al-Foil/Met-BOPP (metallic sheen), BOPET/BOPP (high gloss), LDPE (milky sealant), EVOH (gas core), and Kraft paper.
+- **Segmented Stepper Navigation**: Polished connected progress rails with smooth inter-step transitions and zero text obstruction.
+
 ---
 
 ## 🇮🇳 The Statutory Compliance Layer (India Standards)

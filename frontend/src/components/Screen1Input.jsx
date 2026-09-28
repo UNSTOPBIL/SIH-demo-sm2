@@ -23,6 +23,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
   const [tempC, setTempC] = useState(27);
   const [ambientRh, setAmbientRh] = useState(65);
   const [voiceNotice, setVoiceNotice] = useState('');
+  const [activePreset, setActivePreset] = useState('baseline'); // 'baseline' | 'tropical' | 'cold' | null
 
   // Sync sliders when selectedCommodity changes
   useEffect(() => {
@@ -34,8 +35,40 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
       setStorageType(selectedCommodity.storage_type || 'ambient');
       setTempC(27);
       setAmbientRh(65);
+      setActivePreset('baseline');
     }
   }, [selectedCommodity, isCustomMode]);
+
+  const handleApplyPreset = (presetKey) => {
+    setActivePreset(presetKey);
+    if (presetKey === 'baseline') {
+      if (selectedCommodity && !isCustomMode) {
+        setMoisture(selectedCommodity.moisture_pct);
+        setFat(selectedCommodity.fat_oil_pct);
+        setPh(selectedCommodity.ph_value);
+        setShelfLife(selectedCommodity.shelf_life_days);
+        setStorageType(selectedCommodity.storage_type || 'ambient');
+      } else {
+        setMoisture(10.0);
+        setFat(1.0);
+        setPh(6.5);
+        setShelfLife(180);
+        setStorageType('ambient');
+      }
+      setTempC(27);
+      setAmbientRh(65);
+    } else if (presetKey === 'tropical') {
+      setTempC(42);
+      setAmbientRh(90);
+      setShelfLife(365);
+      setStorageType('ambient');
+    } else if (presetKey === 'cold') {
+      setTempC(4);
+      setAmbientRh(85);
+      setShelfLife(60);
+      setStorageType('chilled');
+    }
+  };
 
   const handleVoiceSearch = () => {
     if (isListening) {
@@ -68,23 +101,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
   };
 
   const handleResetDefaults = () => {
-    if (!isCustomMode && selectedCommodity) {
-      setMoisture(selectedCommodity.moisture_pct);
-      setFat(selectedCommodity.fat_oil_pct);
-      setPh(selectedCommodity.ph_value);
-      setShelfLife(selectedCommodity.shelf_life_days);
-      setStorageType(selectedCommodity.storage_type || 'ambient');
-      setTempC(27);
-      setAmbientRh(65);
-    } else {
-      setMoisture(10.0);
-      setFat(1.0);
-      setPh(6.5);
-      setShelfLife(180);
-      setStorageType('ambient');
-      setTempC(27);
-      setAmbientRh(65);
-    }
+    handleApplyPreset('baseline');
   };
 
   const handleSubmit = (e) => {
@@ -214,9 +231,9 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 type="button"
                 onClick={handleVoiceSearch}
                 title={t('voice_search_tooltip')}
-                className={`p-3.5 rounded-xl border transition flex items-center justify-center ${
+                className={`p-3.5 rounded-xl border transition flex items-center justify-center relative ${
                   isListening
-                    ? 'bg-red-500 text-white border-red-600 animate-pulse ring-4 ring-red-200 dark:ring-red-950'
+                    ? 'bg-rose-600 text-white border-rose-500 animate-pulse ring-4 ring-rose-500/30 shadow-lg shadow-rose-600/30'
                     : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/60'
                 }`}
               >
@@ -224,11 +241,21 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
               </button>
             </div>
 
-            {/* Voice Notification / Spoken Text */}
+            {/* Voice Notification / Spoken Text & Audio Wave */}
             {voiceNotice && (
-              <div className="mt-2 flex items-center gap-2 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <span>{voiceNotice}</span>
+              <div className="mt-2 flex items-center justify-between gap-2 text-xs font-medium text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-3.5 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <Volume2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>{voiceNotice}</span>
+                </div>
+                {isListening && (
+                  <div className="flex items-center gap-1 h-4 px-1 shrink-0">
+                    <span className="w-1 bg-emerald-500 rounded-full audio-bar-1" />
+                    <span className="w-1 bg-teal-500 rounded-full audio-bar-2" />
+                    <span className="w-1 bg-cyan-500 rounded-full audio-bar-3" />
+                    <span className="w-1 bg-emerald-400 rounded-full audio-bar-4" />
+                  </div>
+                )}
               </div>
             )}
             {!isSupported && (
@@ -331,19 +358,68 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
 
         {/* Customization Sliders Section */}
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-5">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
               <Sliders className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>{t('customize_parameters')}</span>
             </div>
-            <button
-              type="button"
-              onClick={handleResetDefaults}
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center gap-1 font-medium transition"
-            >
-              <RefreshCw className="w-3 h-3" />
-              Reset ODOP Defaults
-            </button>
+
+            {/* Simulation Preset Chips */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mr-1 hidden md:inline">Presets:</span>
+
+              <button
+                type="button"
+                onClick={() => handleApplyPreset('baseline')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition flex items-center gap-1.5 ${
+                  activePreset === 'baseline'
+                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-800 dark:text-emerald-300 ring-2 ring-emerald-500/20 shadow-xs'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-emerald-400'
+                }`}
+                title="Reset to ODOP baseline crop conditions"
+              >
+                <span>🌾</span>
+                <span>Baseline ODOP</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleApplyPreset('tropical')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition flex items-center gap-1.5 ${
+                  activePreset === 'tropical'
+                    ? 'bg-amber-500/15 border-amber-500 text-amber-900 dark:text-amber-300 ring-2 ring-amber-500/20 shadow-xs'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-amber-400'
+                }`}
+                title="Stress test at 42°C and 90% RH (Monsoon Warehousing)"
+              >
+                <span>🔥</span>
+                <span>Extreme Tropical</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleApplyPreset('cold')}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition flex items-center gap-1.5 ${
+                  activePreset === 'cold'
+                    ? 'bg-cyan-500/15 border-cyan-500 text-cyan-900 dark:text-cyan-300 ring-2 ring-cyan-500/20 shadow-xs'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-cyan-400'
+                }`}
+                title="Chilled distribution at 4°C and 85% RH"
+              >
+                <span>❄️</span>
+                <span>Cold Chain</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleResetDefaults}
+                className="text-xs text-slate-500 dark:text-slate-400 hover:text-emerald-700 dark:hover:text-emerald-400 flex items-center gap-1 font-medium transition ml-1"
+                title="Reset all fields to default"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -351,7 +427,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">{t('moisture_label')}</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(16,185,129,0.15)]">
                   {moisture}%
                 </span>
               </div>
@@ -361,8 +437,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="95.0"
                 step="0.5"
                 value={moisture}
-                onChange={(e) => setMoisture(parseFloat(e.target.value))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                onChange={(e) => {
+                  setMoisture(parseFloat(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-emerald-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>0.1% (Dry powder)</span>
@@ -374,7 +453,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">{t('fat_label')}</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(16,185,129,0.15)]">
                   {fat}%
                 </span>
               </div>
@@ -384,8 +463,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="99.9"
                 step="0.5"
                 value={fat}
-                onChange={(e) => setFat(parseFloat(e.target.value))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                onChange={(e) => {
+                  setFat(parseFloat(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-emerald-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>0% (Oil-free)</span>
@@ -397,7 +479,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">{t('ph_label')}</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(16,185,129,0.15)]">
                   pH {ph}
                 </span>
               </div>
@@ -407,8 +489,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="8.5"
                 step="0.1"
                 value={ph}
-                onChange={(e) => setPh(parseFloat(e.target.value))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                onChange={(e) => {
+                  setPh(parseFloat(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-emerald-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>pH 2.0 (Acidic Pickle)</span>
@@ -420,7 +505,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">{t('shelf_life_label')}</span>
-                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(16,185,129,0.15)]">
                   {shelfLife} {t('days')}
                 </span>
               </div>
@@ -430,8 +515,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="730"
                 step="7"
                 value={shelfLife}
-                onChange={(e) => setShelfLife(parseInt(e.target.value))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                onChange={(e) => {
+                  setShelfLife(parseInt(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-emerald-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>7 days (Chilled)</span>
@@ -443,7 +531,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">Storage Temperature (°C)</span>
-                <span className="font-bold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-rose-700 dark:text-rose-300 bg-rose-100/90 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(244,63,94,0.15)]">
                   {tempC}°C
                 </span>
               </div>
@@ -453,8 +541,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="45"
                 step="1"
                 value={tempC}
-                onChange={(e) => setTempC(parseFloat(e.target.value))}
-                className="w-full accent-rose-600 cursor-pointer"
+                onChange={(e) => {
+                  setTempC(parseFloat(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-rose-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>4°C (Cold Chain)</span>
@@ -467,7 +558,7 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
             <div className="p-3.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
               <div className="flex justify-between items-center text-xs">
                 <span className="font-medium text-slate-700 dark:text-slate-300">Ambient Relative Humidity (% RH)</span>
-                <span className="font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded">
+                <span className="font-bold text-blue-700 dark:text-blue-300 bg-blue-100/90 dark:bg-blue-950/80 border border-blue-300 dark:border-blue-800 px-2.5 py-0.5 rounded-md font-mono shadow-[0_0_8px_rgba(59,130,246,0.15)]">
                   {ambientRh}% RH
                 </span>
               </div>
@@ -477,8 +568,11 @@ export const Screen1Input = ({ commodities, selectedCommodity, onSelectCommodity
                 max="95"
                 step="1"
                 value={ambientRh}
-                onChange={(e) => setAmbientRh(parseFloat(e.target.value))}
-                className="w-full accent-blue-600 cursor-pointer"
+                onChange={(e) => {
+                  setAmbientRh(parseFloat(e.target.value));
+                  setActivePreset(null);
+                }}
+                className="w-full slider-custom accent-blue-600 cursor-pointer"
               />
               <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-500">
                 <span>20% (Arid Zone)</span>
