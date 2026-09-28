@@ -9,6 +9,44 @@ import { Screen4ReadinessSheet } from './components/Screen4ReadinessSheet';
 import { VerifyPassport } from './components/VerifyPassport';
 import { LabelAuditor } from './components/LabelAuditor';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="max-w-xl mx-auto p-6 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-2xl text-center space-y-4 my-10">
+          <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-300 rounded-full flex items-center justify-center mx-auto text-xl font-bold">!</div>
+          <h3 className="text-lg font-bold text-rose-950 dark:text-rose-200">An unexpected rendering issue occurred</h3>
+          <p className="text-xs text-rose-700 dark:text-rose-400 font-mono bg-rose-100/60 dark:bg-rose-900/40 p-2.5 rounded-lg text-left overflow-auto max-h-24">
+            {this.state.error?.message || "Unknown error"}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              this.setState({ hasError: false, error: null });
+              if (this.props.onReset) this.props.onReset();
+              else window.location.href = '/';
+            }}
+            className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export const App = () => {
   const { language, toggleLanguage, t } = useLanguage();
   const { theme, toggleTheme, isDark } = useTheme();
@@ -259,69 +297,71 @@ export const App = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6 md:py-8">
-        {activeView === 'verify' && (
-          <VerifyPassport onBack={() => navigateTo('stepper')} />
-        )}
+        <ErrorBoundary onReset={() => setCurrentStep(1)}>
+          {activeView === 'verify' && (
+            <VerifyPassport onBack={() => navigateTo('stepper')} />
+          )}
 
-        {activeView === 'auditor' && (
-          <LabelAuditor onBack={() => navigateTo('stepper')} />
-        )}
+          {activeView === 'auditor' && (
+            <LabelAuditor onBack={() => navigateTo('stepper')} />
+          )}
 
-        {activeView === 'stepper' && (
-          <>
-            {currentStep === 1 && (
-              <Screen1Input
-                commodities={commodities}
-                selectedCommodity={selectedCommodity}
-                onSelectCommodity={setSelectedCommodity}
-                onAnalyze={handleAnalyze}
-                isAnalyzing={isAnalyzing}
-              />
-            )}
+          {activeView === 'stepper' && (
+            <>
+              {currentStep === 1 && (
+                <Screen1Input
+                  commodities={commodities}
+                  selectedCommodity={selectedCommodity}
+                  onSelectCommodity={setSelectedCommodity}
+                  onAnalyze={handleAnalyze}
+                  isAnalyzing={isAnalyzing}
+                />
+              )}
 
-            {currentStep === 2 && recommendation && (
-              <Screen2Recommendation
-                recommendation={recommendation}
-                onNext={() => {
-                  setCurrentStep(3);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onBack={() => {
-                  setCurrentStep(1);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
-            )}
+              {currentStep === 2 && recommendation && (
+                <Screen2Recommendation
+                  recommendation={recommendation}
+                  onNext={() => {
+                    setCurrentStep(3);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onBack={() => {
+                    setCurrentStep(1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              )}
 
-            {currentStep === 3 && complianceData && (
-              <Screen3Compliance
-                complianceData={complianceData}
-                onNext={() => {
-                  setCurrentStep(4);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onBack={() => {
-                  setCurrentStep(2);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-              />
-            )}
+              {currentStep === 3 && complianceData && (
+                <Screen3Compliance
+                  complianceData={complianceData}
+                  onNext={() => {
+                    setCurrentStep(4);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onBack={() => {
+                    setCurrentStep(2);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              )}
 
-            {currentStep === 4 && recommendation && complianceData && (
-              <Screen4ReadinessSheet
-                recommendation={recommendation}
-                complianceData={complianceData}
-                onBack={() => {
-                  setCurrentStep(3);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onOpenPassport={(batch) => {
-                  navigateTo('verify', `?id=${recommendation.commodity_id}&batch=${batch || 'PMFME-2026-CERT'}`);
-                }}
-              />
-            )}
-          </>
-        )}
+              {currentStep === 4 && recommendation && complianceData && (
+                <Screen4ReadinessSheet
+                  recommendation={recommendation}
+                  complianceData={complianceData}
+                  onBack={() => {
+                    setCurrentStep(3);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenPassport={(batch) => {
+                    navigateTo('verify', `?id=${recommendation.commodity_id}&batch=${batch || 'PMFME-2026-CERT'}`);
+                  }}
+                />
+              )}
+            </>
+          )}
+        </ErrorBoundary>
       </main>
 
       {/* Footer */}

@@ -78,9 +78,9 @@ export const SimulantProtocolCard = ({ simulantProtocol, commodityName = '' }) =
                     <span className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs ${
                       isPrimary ? 'bg-amber-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                     }`}>
-                      {sim.code.replace('Simulant ', '')}
+                      {(sim.code || sim.simulant_code || '').replace('Simulant ', '')}
                     </span>
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">{sim.code}</span>
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">{sim.code || sim.simulant_code || 'Simulant'}</span>
                   </div>
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
                     isPrimary
@@ -93,10 +93,10 @@ export const SimulantProtocolCard = ({ simulantProtocol, commodityName = '' }) =
 
                 <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
                   <div className="font-medium text-slate-900 dark:text-white">
-                    {sim.name}
+                    {sim.name || sim.description}
                   </div>
                   <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                    <strong>Applicability:</strong> {sim.target_food}
+                    <strong>Applicability:</strong> {sim.target_food || sim.applies_to}
                   </div>
                 </div>
               </div>
@@ -104,9 +104,9 @@ export const SimulantProtocolCard = ({ simulantProtocol, commodityName = '' }) =
               <div className="mt-3 pt-2.5 border-t border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-300 font-mono">
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3 text-slate-400" />
-                  {sim.condition}
+                  {sim.condition || '40°C for 10 Days'}
                 </span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">Limit: ≤ 60 ppm</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">{sim.limit || 'Limit: ≤ 60 ppm'}</span>
               </div>
             </div>
           );
@@ -120,7 +120,7 @@ export const SimulantProtocolCard = ({ simulantProtocol, commodityName = '' }) =
           <span>Statutory Testing Methodology (IS 9845:1998 Annex A)</span>
         </div>
         <p className="text-slate-300 text-[11px] leading-relaxed">
-          {analytical_method}. Total exposed surface area $A \ge 1\text{ dm}^2$ per $100\text{ ml}$ of simulant. Test specimen must be completely immersed in conditioned simulant within sealed borosilicate cell. Residue calculated after drying to constant weight at $105^\circ\text{C} \pm 2^\circ\text{C}$.
+          {analytical_method}. Total exposed surface area A ≥ 1 dm² per 100 mL of simulant. Test specimen must be completely immersed in conditioned simulant within sealed borosilicate cell. Residue calculated after drying to constant weight at 105°C ± 2°C.
         </p>
       </div>
     </div>
